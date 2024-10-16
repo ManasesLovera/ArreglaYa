@@ -8,7 +8,7 @@ namespace Domain.Models
 {
     public class Client
     {
-        public int IdClient { get; set; }
+        public int Id { get; set; }
 
         public string Username { get; set; }
 

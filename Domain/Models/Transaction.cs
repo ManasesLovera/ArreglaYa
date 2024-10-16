@@ -11,12 +11,16 @@ namespace Domain.Models
     public class Transaction
     {
         [Key]
-        public int IdTransaction { get; set; }
+        public int Id { get; set; }
 
         [ForeignKey("ClientId")]
+        public int ClientId { get; set; }
+
         public Client Client { get; set; }
 
         [ForeignKey("CompanyServiceId")]
+        public int CompanyServiceId { get; set; }
+
         public CompanyService CompanyService { get; set; }
     }
 }

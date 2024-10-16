@@ -11,7 +11,7 @@ namespace Domain.Models
     public class CompanyService
     {
         [Key]
-        public int IdCompanyService { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
@@ -19,10 +19,11 @@ namespace Domain.Models
 
         public decimal Price { get; set; }
 
-        public ICollection<Transaction> Transactions { get; set; }
-
         [ForeignKey("UserId")]
+        public int UserId { get; set; }
+
         public Company Company { get; set; }
 
+        public ICollection<Transaction> Transactions { get; set; }
     }
 }

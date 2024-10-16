@@ -10,7 +10,7 @@ namespace Domain.Models
     public class Company
     {
         [Key]
-        public int IdCompany { get; set; }
+        public int Id { get; set; }
 
         public string Username { get; set; }
 
