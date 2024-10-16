@@ -13,17 +13,20 @@ namespace Domain.Models
         [Key]
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public decimal Price { get; set; }
 
-        [ForeignKey("UserId")]
         public int UserId { get; set; }
 
-        public Company Company { get; set; }
+        public User? User { get; set; }
 
-        public ICollection<Transaction> Transactions { get; set; }
+        public int CompanyId { get; set; }
+
+        public Company? Company { get; set; }
+
+        public ICollection<Transaction>? Transactions { get; set; }
     }
 }

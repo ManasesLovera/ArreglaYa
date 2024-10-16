@@ -13,14 +13,12 @@ namespace Domain.Models
         [Key]
         public int Id { get; set; }
 
-        [ForeignKey("ClientId")]
         public int ClientId { get; set; }
 
-        public Client Client { get; set; }
+        public Client? Client { get; set; }
 
-        [ForeignKey("CompanyServiceId")]
         public int CompanyServiceId { get; set; }
 
-        public CompanyService CompanyService { get; set; }
+        public CompanyService? CompanyService { get; set; }
     }
 }
