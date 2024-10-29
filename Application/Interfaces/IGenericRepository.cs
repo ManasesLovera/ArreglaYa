@@ -14,7 +14,7 @@ namespace Application.Interfaces
 
         Task AddAsync(T entity);
 
-        Task UpdateAsync(int id, T entity);
+        Task UpdateAsync(T entity);
 
         Task DeleteAsync(int id);
     }

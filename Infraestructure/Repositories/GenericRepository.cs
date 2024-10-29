@@ -43,7 +43,7 @@ namespace Infraestructure.Repositories
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task UpdateAsync(int id, T entity)
+        public async Task UpdateAsync(T entity)
         {
             _context.Set<T>().Update(entity);
             await _context.SaveChangesAsync();
