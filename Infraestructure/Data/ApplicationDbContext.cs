@@ -35,12 +35,6 @@ namespace Infraestructure.Data
                 .HasOne(t => t.CompanyService)
                 .WithMany(cs => cs.Transactions)
                 .HasForeignKey(t => t.CompanyServiceId);
-
-            // companyService y user
-            modelBuilder.Entity<CompanyService>()
-                .HasOne(cs => cs.User)
-                .WithMany()
-                .HasForeignKey(cs => cs.UserId);
         }
 
     }
