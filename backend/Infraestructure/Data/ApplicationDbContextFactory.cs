@@ -13,18 +13,9 @@ namespace Infraestructure.Data
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
-            // Create a configuration object to read appsettings.json
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Presentation/Presentation.Server")) // Adjust path if necessary
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-            // Retrieve the connection string from appsettings.json
-            var connectionString = configuration.GetConnectionString("SQLiteConnection");
-
             // Set up DbContext options with the connection string
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlite(connectionString); // or UseSqlServer for SQL Server
+            optionsBuilder.UseSqlite("Data Source=arreglaya.db");
 
             return new ApplicationDbContext(optionsBuilder.Options);
         }
