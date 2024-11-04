@@ -18,7 +18,7 @@ namespace Infraestructure.IOC
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlite(configuration.GetConnectionString("SQLiteConection"), b => b.MigrationsAssembly("Infraestructure.IOC"));
+                options.UseSqlite(configuration.GetConnectionString("SQLiteConnection"), b => b.MigrationsAssembly("Infraestructure.IOC"));
             });
 
             services.AddIdentity<IdentityUser, IdentityRole>()
