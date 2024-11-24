@@ -19,7 +19,8 @@ builder.Services.AddSwaggerGen();
 //DI
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddAplicationLayer();
-
+builder.Services.AddScoped<IValidator<RegisterRequest>, CreateAdminValidator>();
+builder.Services.AddScoped<IValidator<UpdateAdminDTos>, UpdateAdminValidator>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
