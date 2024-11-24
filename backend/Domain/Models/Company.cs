@@ -12,6 +12,5 @@ namespace Domain.Models
     {
         public ICollection<CompanyService>? CompanyServices { get; }
 
-        public string? FullName { get; set; }
     }
 }

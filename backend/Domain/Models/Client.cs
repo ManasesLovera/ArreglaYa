@@ -10,7 +10,5 @@ namespace Domain.Models
     public class Client : IdentityUser
     {
         public ICollection<Transaction>? Transactions { get; set; }
-
-        public string? FullName { get; set; }
     }
 }
