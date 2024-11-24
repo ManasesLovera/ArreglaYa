@@ -33,7 +33,7 @@ namespace Application.Services
             if (email != null)
             {
                 response.HasError = true;
-                response.Error = $"Este email esta tomado{email}";
+                response.ResultMessage = $"This email is taken {email}";
                 return response;
             }
 
@@ -41,7 +41,7 @@ namespace Application.Services
             if (username != null)
             {
                 response.HasError = true;
-                response.Error = $"Este usuario esta tomado{username}";
+                response.ResultMessage = $"This user is taken {username}";
                 return response;
             }
             request.EmailConfirmed = true;
@@ -58,10 +58,16 @@ namespace Application.Services
             if (!result.Succeeded)
             { 
                 response.HasError = true;
-                response.Error = "An error ocurred trying to registed the user";
+                response.ResultMessage = "An error ocurred trying to registed the user";
                 return response;
-            } 
-            return response;
+            }
+            else
+            {
+                response.HasError = false;
+                response.ResultMessage = $"Your email is {request.Email} and your username is {request.Username}";
+                return response;
+            }
+            //return response;
         }
 
         public async Task<IEnumerable<AdminDTos>> GetAllAsync()
