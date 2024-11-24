@@ -10,6 +10,6 @@ namespace Application.DTOs.Admin
     {
         public bool HasError { get; set; }
 
-        public string? Error { get; set; }
+        public string? ResultMessage { get; set; }
     }
 }
