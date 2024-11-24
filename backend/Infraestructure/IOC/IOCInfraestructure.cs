@@ -1,5 +1,7 @@
-﻿using Domain.Models;
+﻿using Application.Interfaces;
+using Domain.Models;
 using Infraestructure.Data;
+using Infraestructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +26,8 @@ namespace Infraestructure.IOC
             services.AddIdentity<IdentityUser, IdentityRole>()
                      .AddEntityFrameworkStores<ApplicationDbContext>()
                      .AddDefaultTokenProviders();
+
+            services.AddScoped<ICompanyRepository,CompanyRepository>();
         }
     }
 }
