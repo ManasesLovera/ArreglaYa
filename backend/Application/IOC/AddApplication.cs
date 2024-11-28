@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces.Services;
 using Application.Mapper;
 using Application.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
