@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.Admin
 {
-    public class AdminDTos : IdentityUser
-    {
-
-    }
+    public record AdminDTos 
+    (
+        string Id,
+        string Email,
+        string Username,
+        string FullName
+    );
 }
