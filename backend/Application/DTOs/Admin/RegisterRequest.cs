@@ -6,16 +6,11 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.Admin
 {
-    public class RegisterRequest
-    {
-        public string? Email { get; set; }
-
-        public string? Username { get; set; }
-
-        public string? Password { get; set; }
-
-        public bool EmailConfirmed { get; set; }
-
-        public string? Phone {  get; set; }
-    }
+    public record RegisterRequest
+    (
+        string Email,
+        string Username,
+        string Password,
+        string FullName
+    );
 }
