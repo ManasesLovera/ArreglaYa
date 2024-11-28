@@ -14,10 +14,11 @@ namespace Application.Mapper
         public MapperProfile()
         {
             #region Admin
-            CreateMap<Admin, UpdateAdminDTos>()
-                            .ReverseMap();
-            CreateMap<Admin, AdminDTos>()
-                            .ReverseMap(); 
+            CreateMap<Admin, AdminDTos>();
+            CreateMap<AdminDTos, Admin>();
+
+            CreateMap<Admin, RegisterResponse>();
+            CreateMap<RegisterResponse, Admin>();
             #endregion
         }
 
