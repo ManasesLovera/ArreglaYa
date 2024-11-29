@@ -15,16 +15,11 @@ namespace WebAPI.Controllers
     {
         private readonly IAdminService _adminService;
         private readonly IValidator<RegisterRequest> _validator;
-        private readonly IValidator<UpdateAdminDTos> _validatorUpdate;
-        public AdminController(IAdminService adminService, IValidator<RegisterRequest> validator, IValidator<UpdateAdminDTos> validatorUpdate )
+        public AdminController(IAdminService adminService, IValidator<RegisterRequest> validator )
         {
             _adminService = adminService;
             _validator = validator;
-            _validatorUpdate = validatorUpdate;
         }
-
-        [HttpGet("all")]
-        public async Task<IEnumerable<AdminDTos>> GetAll() => await _adminService.GetAllAsync();
 
         [HttpGet()]
         public async Task<ActionResult<AdminDTos>> GetById([FromQuery]string id)
@@ -46,28 +41,14 @@ namespace WebAPI.Controllers
 
             var adminCreate = await _adminService.RegisterAsync(request);
 
-            return Ok(adminCreate);
-        }
-
-        [HttpPatch("{id}")]
-        public async Task<ActionResult<AdminDTos>> Update(string id, [FromBody] UpdateAdminDTos updateAdminDTos)
-        {
-            var result = await _validatorUpdate.ValidateAsync(updateAdminDTos);
-
-            if (!result.IsValid)
-            {
-                return BadRequest(result.Errors);
-            }
-            var adminUpdate = await _adminService.UpdateAsync(id,updateAdminDTos);
-            
-            return adminUpdate == null ? NotFound("No admin found with this id") : Ok(adminUpdate);
+            return CreatedAtAction(nameof(GetById), new {Id = adminCreate.Id}, adminCreate);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
             var admin = await _adminService.DeleteAsync(id);
-            return admin == null ? NotFound() : NoContent();
+            return admin == null ? NotFound("User not found") : NoContent();
         }
     }
 }
