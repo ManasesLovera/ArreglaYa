@@ -9,6 +9,6 @@ namespace Domain.Models
 {
     public class Admin : IdentityUser
     {
-
+        public string? FullName { get; set; }
     }
 }
