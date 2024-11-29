@@ -11,12 +11,9 @@ namespace Application.Interfaces.Services
     {
         Task<RegisterResponse> RegisterAsync(RegisterRequest request);
 
-        Task<IEnumerable<AdminDTos>> GetAllAsync();
-
         Task<AdminDTos> GetByIdAsync(string id);
 
         Task<AdminDTos> DeleteAsync(string id);
 
-        Task<AdminDTos> UpdateAsync(string id,UpdateAdminDTos adminDTos);
     }
 }

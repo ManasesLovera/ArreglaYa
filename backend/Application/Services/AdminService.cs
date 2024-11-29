@@ -15,70 +15,56 @@ namespace Application.Services
 {
     public class AdminService : IAdminService
     {
-        private readonly IAdminRepository _adminRepository;
+        private readonly SignInManager<Admin> _signInManager;
+        private readonly UserManager<Admin> _userManager;
         private readonly IMapper _mapper;
 
-        public AdminService(IAdminRepository adminRepository,IMapper mapper)
+        public AdminService(SignInManager<Admin> signInManager, UserManager<Admin> userManager, IMapper mapper)
         {
-            _adminRepository = adminRepository;
+            _signInManager = signInManager;
+            _userManager = userManager;
             _mapper = mapper;
         }
         public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
         {
-            RegisterResponse response = new ();
-            response.HasError = false;
+            RegisterResponse response = new();
 
-            var email = await _adminRepository.FindByEmailAsync(request.Email);
+            var email = await _userManager.FindByEmailAsync(request.Email);
 
             if (email != null)
             {
-                response.HasError = true;
                 response.ResultMessage = $"This email is taken {email}";
                 return response;
             }
 
-            var username = await _adminRepository.FindByNameAsync(request.Username);
+            var username = await _userManager.FindByNameAsync(request.Username);
             if (username != null)
-            {
-                response.HasError = true;
-                response.ResultMessage = $"This user is taken {username}";
+            { 
+                response.ResultMessage = $"This user is taken {username}"; 
                 return response;
             }
-            request.EmailConfirmed = true;
-            //var admin = _mapper.Map<Admin>(request);
             var admin = new Admin
-            {
+            {   
                 Email = request.Email,
                 UserName = request.Username,
-                PhoneNumber = request.Phone,
-                EmailConfirmed = request.EmailConfirmed
+                FullName = request.FullName
             };
 
-            var result = await _adminRepository.CreateAsync(admin, request.Password);
+            var result = await _userManager.CreateAsync(admin, request.Password);
             if (!result.Succeeded)
-            { 
-                response.HasError = true;
-                response.ResultMessage = "An error ocurred trying to registed the user";
-                return response;
-            }
-            else
             {
-                response.HasError = false;
-                response.ResultMessage = $"Your email is {request.Email} and your username is {request.Username}";
+                 response.ResultMessage = "An error ocurred trying to registed the user";
                 return response;
             }
-            //return response;
-        }
 
-        public async Task<IEnumerable<AdminDTos>> GetAllAsync()
-        {
-           var admin = await _adminRepository.GetAllAsync();
-            return admin.Select(x => _mapper.Map<AdminDTos>(x));
+            var responseDto = _mapper.Map<RegisterResponse>(admin); 
+
+            return responseDto;
         }
 
         public async Task<AdminDTos> GetByIdAsync(string id)
         {
-            var adminId = await _adminRepository.GetByIdAsync(id);
+            var adminId = await _userManager.FindByIdAsync(id);
             if (adminId != null)
             {
                 var adminDto = _mapper.Map<AdminDTos>(adminId);
@@ -89,32 +75,17 @@ namespace Application.Services
 
         public async Task<AdminDTos> DeleteAsync(string id)
         {
-            var adminId = await _adminRepository.GetByIdAsync(id);
+            var adminId = await _userManager.FindByIdAsync(id);
 
             if (adminId != null)
             {
-                await _adminRepository.DeleteAsync(adminId);
+                await _userManager.DeleteAsync(adminId);
                 var adminDto = _mapper.Map<AdminDTos>(adminId);
                 return adminDto;
             }
 
             return null;
-        }
-
-        public async Task<AdminDTos> UpdateAsync(string id, UpdateAdminDTos adminDTos)
-        {
-            var adminId = await _adminRepository.GetByIdAsync(id);
-            if (adminId != null)
-            {
-                adminId = _mapper.Map<UpdateAdminDTos, Admin>(adminDTos,adminId);
-                await _adminRepository.UpdateAsync(adminId);
-
-                var adminDto = _mapper.Map<AdminDTos>(adminId);
-                return adminDto;
-            }
-
-            return null;
-        }
+        } 
     }
 }
  
