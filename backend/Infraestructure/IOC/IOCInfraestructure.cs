@@ -32,7 +32,6 @@ namespace Infraestructure.IOC
             #endregion
 
             #region Repositories
-            services.AddTransient<IAdminRepository, AdminRepository>();
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             #endregion
         }
