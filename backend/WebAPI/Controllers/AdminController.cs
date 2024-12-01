@@ -1,8 +1,10 @@
 ﻿using Application.DTOs.Admin;
-using Application.Interfaces.Services;
+using AutoMapper;
+using Domain.Models;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WebAPI.Validation.Admin;
@@ -11,22 +13,36 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminController : ControllerBase
+    public class AdminController : BaseController
     {
-        private readonly IAdminService _adminService;
-        private readonly IValidator<RegisterRequest> _validator;
-        public AdminController(IAdminService adminService, IValidator<RegisterRequest> validator )
+        private readonly SignInManager<Admin> _signInManager;
+        private readonly UserManager<Admin> _userManager;
+        private readonly IMapper _mapper;
+
+        public AdminController(SignInManager<Admin> signInManager, UserManager<Admin> userManager, IMapper mapper, 
+            IValidator<RegisterRequest> validator) : base(validator)
         {
-            _adminService = adminService;
-            _validator = validator;
+            _signInManager = signInManager;
+            _userManager = userManager;
+            _mapper = mapper;
         }
 
         [HttpGet()]
-        public async Task<ActionResult<AdminDTos>> GetById([FromQuery]string id)
+        public async Task<ActionResult<AdminDTos>> GetAdminById([FromQuery]string id)
         {
-            var adminId = await _adminService.GetByIdAsync(id);
-
-            return adminId == null ? NotFound() : Ok(adminId);
+            try
+            {
+                var admin = await _userManager.FindByIdAsync(id);
+                if (admin == null)
+                {
+                    return NotFound(new AdminResult(false, null, "Admin not found"));
+                }
+                return Ok(new AdminResult(true, admin, "Query successful"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new AdminResult(false, null, $"Internal Server Error: {ex.Message}"));
+            }
         }
 
         [HttpPost("add")]
@@ -39,16 +55,55 @@ namespace WebAPI.Controllers
                 return BadRequest(result.Errors);
             }
 
-            var adminCreate = await _adminService.RegisterAsync(request);
+            var email = await _userManager.FindByEmailAsync(request.Email);
 
-            return CreatedAtAction(nameof(GetById), new {Id = adminCreate.Id}, adminCreate);
+            if (email != null)
+            {
+                return NotFound(new AdminResult(false, null, $"This email is taken {email}"));
+            }
+
+            var username = await _userManager.FindByEmailAsync(request.Username);
+
+            if (username != null)
+            {
+                return BadRequest(new AdminResult(false,null, $"This user is taken {username}"));
+            }
+
+            var admin = new Admin
+            {
+                Email = request.Email,
+                UserName = request.Username,
+                FullName = request.FullName
+            };
+
+            var resultUser = await _userManager.CreateAsync(admin, request.Password);
+
+            if (!resultUser.Succeeded)
+            {
+                return BadRequest("An error ocurred trying to registed the user");
+            }
+
+            var responseDto = _mapper.Map<RegisterResponse>(admin);
+
+            return CreatedAtAction(nameof(GetAdminById),new {Id = admin.Id}, responseDto);
+
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
-            var admin = await _adminService.DeleteAsync(id);
-            return admin == null ? NotFound("User not found") : NoContent();
+            var adminId = await _userManager.FindByIdAsync(id);
+
+            if (adminId != null)
+            {
+                await _userManager.DeleteAsync(adminId);
+                var adminDto = _mapper.Map<AdminDTos>(adminId);
+                return NoContent();
+            }
+
+            return NotFound("User not found");
         }
     }
 }
+
+
