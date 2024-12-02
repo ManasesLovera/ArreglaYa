@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Models
 {
-    public class Admin : IdentityUser
+    public class Admin : BaseUser
     {
-        public string? FullName { get; set; }
+
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Models
 {
-    public class Company : IdentityUser
+    public class Company : BaseUser
     {
         public ICollection<CompanyService>? CompanyServices { get; }
 
