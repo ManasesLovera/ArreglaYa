@@ -9,7 +9,7 @@ namespace Application.DTOs.Admin
     public record AdminResult
     (
         bool IsSuccessful,
-        Domain.Models.Admin Admin,
+        AdminDTos Admin,
         string Message
     );
 }
