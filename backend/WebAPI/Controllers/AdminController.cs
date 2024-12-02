@@ -15,11 +15,11 @@ namespace WebAPI.Controllers
     [ApiController]
     public class AdminController : BaseController
     {
-        private readonly SignInManager<Admin> _signInManager;
-        private readonly UserManager<Admin> _userManager;
+        private readonly SignInManager<BaseUser> _signInManager;
+        private readonly UserManager<BaseUser> _userManager;
         private readonly IMapper _mapper;
 
-        public AdminController(SignInManager<Admin> signInManager, UserManager<Admin> userManager, IMapper mapper, 
+        public AdminController(SignInManager<BaseUser> signInManager, UserManager<BaseUser> userManager, IMapper mapper, 
             IValidator<RegisterRequest> validator) : base(validator)
         {
             _signInManager = signInManager;
@@ -37,7 +37,8 @@ namespace WebAPI.Controllers
                 {
                     return NotFound(new AdminResult(false, null, "Admin not found"));
                 }
-                return Ok(new AdminResult(true, admin, "Query successful"));
+                var adminDto = _mapper.Map<AdminDTos>(admin);
+                return Ok(new AdminResult(true, adminDto, "Query successful"));
             }
             catch (Exception ex)
             {
