@@ -26,7 +26,7 @@ namespace Infraestructure.IOC
             #endregion
 
             #region Identity
-            services.AddIdentity<Admin, IdentityRole>()
+            services.AddIdentity<BaseUser, IdentityRole>()
                      .AddEntityFrameworkStores<ApplicationDbContext>()
                      .AddDefaultTokenProviders();
             #endregion
