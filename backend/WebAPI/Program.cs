@@ -5,6 +5,7 @@ using Application.IOC;
 using FluentValidation;
 using Application.DTOs.Admin;
 using WebAPI.Validation.Admin;
+using WebAPI.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ builder.Services.AddSwaggerGen();
 //DI
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddAplicationLayer();
-builder.Services.AddScoped<IValidator<RegisterRequest>, CreateAdminValidator>();
+builder.Services.AddValidators();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
