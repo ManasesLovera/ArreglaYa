@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Application.Interfaces.Repository;
 using Domain.Models;
 using Infraestructure.Data;
 using Infraestructure.Repositories;
@@ -18,16 +18,22 @@ namespace Infraestructure.IOC
     {
         public static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
         {
+            #region Context
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlite(configuration.GetConnectionString("SQLiteConnection"), b => b.MigrationsAssembly("Infraestructure.IOC"));
             });
+            #endregion
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            #region Identity
+            services.AddIdentity<BaseUser, IdentityRole>()
                      .AddEntityFrameworkStores<ApplicationDbContext>()
                      .AddDefaultTokenProviders();
+            #endregion
 
-            services.AddScoped<ICompanyRepository,CompanyRepository>();
+            #region Repositories
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            #endregion
         }
     }
 }
