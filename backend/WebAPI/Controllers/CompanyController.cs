@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOs.Company;
+using Application.Interfaces;
 using Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,19 @@ namespace WebAPI.Controllers
         public async Task<IEnumerable<Company>> GetAllAsync()
         {
             return await _companyRepo.GetAllAsync();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CompanyResult>> CreateCompany([FromBody] CreateCompanyRequest companyRequest)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }
