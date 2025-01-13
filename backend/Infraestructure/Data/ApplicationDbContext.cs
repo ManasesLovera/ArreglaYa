@@ -2,40 +2,31 @@ using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Infraestructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<BaseUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
-        public DbSet<Admin> Admins { get; set; }
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<Company> Companies { get; set; }
         public DbSet<CompanyService> CompanyServices { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<BaseUser> BaseUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.HasDefaultSchema("Identity");
 
-            modelBuilder.Entity<Admin>(entity =>
-            {
-                entity.ToTable(name: "Admin");
-            });
-
-            modelBuilder.Entity<Client>(entity =>
-            {
-                entity.ToTable(name: "Client");
-            });
-
-            modelBuilder.Entity<Company>(entity =>
-            {
-                entity.ToTable(name: "Company");
-            });
+            modelBuilder.Entity<BaseUser>()
+                .ToTable("Users")
+                .HasDiscriminator<string>("UserType")
+                .HasValue<Admin>("Admin")
+                .HasValue<Company>("Company")
+                .HasValue<Client>("Client");  
 
             modelBuilder.Entity<IdentityRole>(roles =>
             {
