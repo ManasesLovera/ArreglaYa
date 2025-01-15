@@ -16,12 +16,12 @@ namespace WebAPI.Controllers
         private readonly SignInManager<BaseUser> _signInManager;
         private readonly UserManager<BaseUser> _userManager;
         private readonly IMapper _mapper;
-        private readonly IValidator<RegisterRequest> _validator;
+        private readonly IValidator<RegisterClientDto> _validator;
 
         public ClientController(
             SignInManager<BaseUser> signInManager, 
             UserManager<BaseUser> userManager, 
-            IMapper mapper, IValidator<RegisterRequest> validator)
+            IMapper mapper, IValidator<RegisterClientDto> validator)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -34,13 +34,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-             var clientId = await _userManager.FindByIdAsync(id);
+             var client = await _userManager.FindByIdAsync(id);
 
-             if (clientId == null)
+             if (client == null)
              { 
                 return NotFound(new ClientResult(false, null, $"this Id {id} not found"));
              }
-             var clientDto = _mapper.Map<ClientDto>(clientId);
+             var clientDto = _mapper.Map<ClientDto>(client);
              return Ok(new ClientResult(true, clientDto, "Query successful"));
             }
             catch (Exception ex)
@@ -50,7 +50,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateClient([FromBody] RegisterRequest request)
+        public async Task<IActionResult> CreateClient([FromBody] RegisterClientDto request)
         {
 
             var result = await _validator.ValidateAsync(request);
@@ -81,7 +81,7 @@ namespace WebAPI.Controllers
             var resultUser = await _userManager.CreateAsync(client, request.Password);
             if (!resultUser.Succeeded)
             {
-                return BadRequest("An error ocurred trying to registed the user");
+                return BadRequest(resultUser.Errors);
             }
 
             var response = _mapper.Map<RegisterResponse>(client);
@@ -91,10 +91,10 @@ namespace WebAPI.Controllers
         [HttpDelete("{Id}")]
         public async Task<ActionResult<ClientDto>> DeleteByIdClient([FromRoute] string id)
         {
-            var userId = await _userManager.FindByIdAsync(id);
-            if (userId != null)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user != null)
             {
-                await _userManager.DeleteAsync(userId);
+                await _userManager.DeleteAsync(user);
                 return NoContent();
             }
 
