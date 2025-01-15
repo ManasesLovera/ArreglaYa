@@ -6,6 +6,7 @@ using FluentValidation;
 using Application.DTOs.Admin;
 using WebAPI.Validation.Admin;
 using WebAPI.Validation.Client;
+using Application.DTOs.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddAplicationLayer();
 builder.Services.AddScoped<IValidator<RegisterRequest>, CreateAdminValidator>();
-builder.Services.AddScoped<IValidator<RegisterRequest>, CreateClientValidator>();
+builder.Services.AddScoped<IValidator<RegisterClientDto>, CreateClientValidator>();
 
 var app = builder.Build();
 
