@@ -12,9 +12,9 @@ namespace Infraestructure.Data
         {
         }
 
-        public DbSet<CompanyService> CompanyServices { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
-        public DbSet<BaseUser> BaseUsers { get; set; }
+        public DbSet<CompanyService>? CompanyServices { get; set; }
+        public DbSet<Transaction>? Transactions { get; set; }
+        public DbSet<BaseUser>? BaseUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
