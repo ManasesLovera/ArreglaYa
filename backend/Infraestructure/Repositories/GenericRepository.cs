@@ -56,7 +56,7 @@ namespace Infraestructure.Repositories
         /// <param name="pageIndex">The page index (default is 1).</param>
         /// <param name="pageSize">The number of items per page (default is 10).</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains a list of entities.</returns>
-        public virtual async Task<IEnumerable<T>> GetAllAsync(int pageIndex = 1, int pageSize = 10)
+        public virtual async Task<IEnumerable<T>> GetPaginatedAsync(int pageIndex = 1, int pageSize = 10)
         {
             return await _context.Set<T>()
                 .Skip((pageIndex - 1) * pageSize)

@@ -34,9 +34,9 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <returns>A IEnumerable with all companies.</returns>
         [HttpGet]
-        public async Task<PaginatedResponse<CompanyResponse>> GetAllAsync([FromQuery] PaginationQuery query)
+        public async Task<PaginatedResponse<CompanyResponse>> GetPaginatedAsync([FromQuery] PaginationQuery query)
         {
-            var companies = await _companyRepo.GetAllAsync(query.PageIndex, query.PageSize);
+            var companies = await _companyRepo.GetPaginatedAsync(query.PageIndex, query.PageSize);
             var totalRecords = await _companyRepo.GetTotalCountAsync();
             return new PaginatedResponse<CompanyResponse>(
                 _mapper.Map<IEnumerable<CompanyResponse>>(companies),
