@@ -9,7 +9,7 @@ namespace Application.DTOs.Company
     public record CompanyResult
     (
         bool IsSuccessful,
-        CompanyResponse Company,
+        CompanyResponse? Company,
         string Message
     );
 }

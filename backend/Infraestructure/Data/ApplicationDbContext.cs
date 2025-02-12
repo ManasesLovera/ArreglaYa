@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Infraestructure.Data
 {

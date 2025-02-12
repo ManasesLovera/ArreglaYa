@@ -22,6 +22,16 @@ builder.Services.AddAplicationLayer();
 builder.Services.AddValidators();
 var app = builder.Build();
 
+// Run migrations and create the database if it does not exist
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+
+    // Migrate the database automatically
+    context.Database.Migrate(); // This will apply any pending migrations
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
