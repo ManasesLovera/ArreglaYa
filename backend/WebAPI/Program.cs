@@ -5,8 +5,7 @@ using Application.IOC;
 using FluentValidation;
 using Application.DTOs.Admin;
 using WebAPI.Validation.Admin;
-using WebAPI.Validation.Client;
-using Application.DTOs.Client;
+using WebAPI.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +19,18 @@ builder.Services.AddSwaggerGen();
 //DI
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddAplicationLayer();
-builder.Services.AddScoped<IValidator<RegisterRequest>, CreateAdminValidator>();
-builder.Services.AddScoped<IValidator<RegisterClientDto>, CreateClientValidator>();
-
+builder.Services.AddValidators();
 var app = builder.Build();
+
+// Run migrations and create the database if it does not exist
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+
+    // Migrate the database automatically
+    context.Database.Migrate(); // This will apply any pending migrations
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

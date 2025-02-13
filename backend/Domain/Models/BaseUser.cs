@@ -9,6 +9,6 @@ namespace Domain.Models
 {
     public class BaseUser : IdentityUser
     {
-        public string? FullName { get; set; }
+        public string FullName { get; set; } = String.Empty;
     }
 }

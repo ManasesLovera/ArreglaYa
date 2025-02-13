@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Infraestructure.Data
 {
@@ -12,9 +11,9 @@ namespace Infraestructure.Data
         {
         }
 
-        public DbSet<CompanyService> CompanyServices { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
-        public DbSet<BaseUser> BaseUsers { get; set; }
+        public DbSet<CompanyService>? CompanyServices { get; set; }
+        public DbSet<Transaction>? Transactions { get; set; }
+        public DbSet<BaseUser>? BaseUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

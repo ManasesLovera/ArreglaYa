@@ -15,6 +15,7 @@ namespace Application.IOC
         {
             #region Mapper
             services.AddAutoMapper(typeof(MapperProfile));
+            services.AddAutoMapper(typeof(CompanyMapper));
             #endregion
         }
     }
