@@ -1,8 +1,8 @@
 Copyright (c) 2024 ArreglaYa.  
 All Rights Reserved.  
 
-Este software se proporciona únicamente con fines de visualización y uso personal.  
-Se prohíbe la modificación, redistribución o venta sin el consentimiento expreso por escrito del autor.  
+This software is provided solely for viewing and personal use purposes.  
+Modification, redistribution, or sale is strictly prohibited without the express written consent of the author.  
 
-Se permite el uso para fines educativos y no comerciales.  
-Para licencias comerciales o modificaciones, contactar a manaseslovera07@gmail.com. 
+Use for educational and non-commercial purposes is permitted.  
+For commercial licenses or modifications, please contact manaseslovera07@gmail.com.  
