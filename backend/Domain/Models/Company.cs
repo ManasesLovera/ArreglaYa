@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Models
 {
-    public class Company : BaseUser
+    public class Company : IdentityUser, IUser
     {
+        public string FullName { get; set; } = String.Empty;
         public ICollection<CompanyService>? CompanyServices { get; }
-
     }
 }
