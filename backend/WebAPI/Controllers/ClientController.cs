@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Admin;
 using Application.DTOs.Client;
 using AutoMapper;
+using Domain;
 using Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -13,14 +14,14 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        private readonly SignInManager<BaseUser> _signInManager;
-        private readonly UserManager<BaseUser> _userManager;
+        private readonly SignInManager<IUser> _signInManager;
+        private readonly UserManager<IUser> _userManager;
         private readonly IMapper _mapper;
         private readonly IValidator<RegisterClientDto> _validator;
 
         public ClientController(
-            SignInManager<BaseUser> signInManager, 
-            UserManager<BaseUser> userManager, 
+            SignInManager<IUser> signInManager, 
+            UserManager<IUser> userManager, 
             IMapper mapper, IValidator<RegisterClientDto> validator)
         {
             _signInManager = signInManager;
@@ -75,7 +76,7 @@ namespace WebAPI.Controllers
             {
                 UserName = request.Username,
                 Email = request.Email,
-                FullName = request.Username
+                FullName = request.FullName
             };
 
             var resultUser = await _userManager.CreateAsync(client, request.Password);

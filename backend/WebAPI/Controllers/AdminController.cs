@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Domain;
 using WebAPI.Validation.Admin;
 
 namespace WebAPI.Controllers
@@ -15,11 +16,11 @@ namespace WebAPI.Controllers
     [ApiController]
     public class AdminController : BaseController
     {
-        private readonly SignInManager<BaseUser> _signInManager;
-        private readonly UserManager<BaseUser> _userManager;
+        private readonly SignInManager<IUser> _signInManager;
+        private readonly UserManager<IUser> _userManager;
         private readonly IMapper _mapper;
 
-        public AdminController(SignInManager<BaseUser> signInManager, UserManager<BaseUser> userManager, IMapper mapper, 
+        public AdminController(SignInManager<IUser> signInManager, UserManager<IUser> userManager, IMapper mapper, 
             IValidator<RegisterRequest> validator) : base(validator)
         {
             _signInManager = signInManager;

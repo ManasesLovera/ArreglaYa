@@ -2,6 +2,7 @@
 using Application.DTOs.Company;
 using Application.Interfaces.Repository;
 using AutoMapper;
+using Domain;
 using Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
@@ -18,10 +19,10 @@ namespace WebAPI.Controllers
     {
         private readonly ICompanyRepository _companyRepo;
         private readonly IValidator<CreateCompanyRequest> _validator;
-        private readonly UserManager<BaseUser> _userManager;
+        private readonly UserManager<IUser> _userManager;
         private readonly IMapper _mapper;
 
-        public CompanyController(ICompanyRepository companyRepo, IValidator<CreateCompanyRequest> validator, UserManager<BaseUser> userManager, IMapper mapper)
+        public CompanyController(ICompanyRepository companyRepo, IValidator<CreateCompanyRequest> validator, UserManager<IUser> userManager, IMapper mapper)
         {
             _companyRepo = companyRepo;
             _validator = validator;
