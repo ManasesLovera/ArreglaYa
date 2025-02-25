@@ -2,6 +2,7 @@
 using Application.DTOs.Client;
 using AutoMapper;
 using Domain;
+using Domain.Interfaces;
 using Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
