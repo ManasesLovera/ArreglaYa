@@ -15,19 +15,19 @@ namespace Application.Mapper
         public MapperProfile()
         {
             #region Admin
-            CreateMap<BaseUser, AdminDTos>();
-            CreateMap<AdminDTos, BaseUser>();
+            CreateMap<Admin, AdminDTos>();
+            CreateMap<AdminDTos, Admin>();
 
-            CreateMap<BaseUser, RegisterResponse>();
-            CreateMap<RegisterResponse, BaseUser>();
+            CreateMap<Admin, RegisterResponse>();
+            CreateMap<RegisterResponse, Admin>();
             #endregion
 
             #region Client
-            CreateMap<BaseUser, ClientDto>();
-            CreateMap<ClientDto, BaseUser>();
+            CreateMap<Client, ClientDto>();
+            CreateMap<ClientDto, Client>();
 
-            CreateMap<BaseUser, RegisterResponse>();
-            CreateMap<RegisterResponse, BaseUser>();
+            CreateMap<Client, RegisterResponse>();
+            CreateMap<RegisterResponse, Client>();
             #endregion
         }
 

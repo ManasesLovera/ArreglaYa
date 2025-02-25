@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain;
 
 namespace Infraestructure.IOC
 {
@@ -26,7 +27,7 @@ namespace Infraestructure.IOC
             #endregion
 
             #region Identity
-            services.AddIdentity<BaseUser, IdentityRole>()
+            services.AddIdentity<IdentityUser, IdentityRole>()
                      .AddEntityFrameworkStores<ApplicationDbContext>()
                      .AddDefaultTokenProviders();
             #endregion
