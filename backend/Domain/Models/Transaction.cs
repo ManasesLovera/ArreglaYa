@@ -6,19 +6,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Models
+namespace Domain.Models;
+
+/// <summary>
+/// Represents a transaction between a client and a company service.
+/// </summary>
+public class Transaction
 {
-    public class Transaction
-    {
-        [Key]
-        public int Id { get; set; }
+    /// <summary>
+    /// Gets or sets the unique identifier for the transaction.
+    /// </summary>
+    [Key]
+    public int Id { get; set; }
 
-        public string? ClientId { get; set; }
+    /// <summary>
+    /// Gets or sets the ID of the client involved in the transaction.
+    /// </summary>
+    public string? ClientId { get; set; }
 
-        public Client? Client { get; set; }
+    /// <summary>
+    /// Gets or sets the client involved in the transaction.
+    /// </summary>
+    public Client? Client { get; set; }
 
-        public int CompanyServiceId { get; set; }
+    /// <summary>
+    /// Gets or sets the ID of the company service associated with the transaction.
+    /// </summary>
+    public int CompanyServiceId { get; set; }
 
-        public CompanyService? CompanyService { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the company service associated with the transaction.
+    /// </summary>
+    public CompanyService? CompanyService { get; set; }
 }

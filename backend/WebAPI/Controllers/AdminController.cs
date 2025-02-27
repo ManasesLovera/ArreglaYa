@@ -4,8 +4,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Domain;
-using Application.DTOs.Account;
-using Application.DTOs.Common;
 
 namespace WebAPI.Controllers
 {
@@ -68,7 +66,7 @@ namespace WebAPI.Controllers
                 return BadRequest(ApiResponse<string>.ErrorResponse($"This user is taken {username}"));
             }
 
-            var admin = new Admin
+            Admin admin = new Admin
             {
                 Email = request.Email,
                 UserName = request.Username,
