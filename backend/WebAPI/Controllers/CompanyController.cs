@@ -3,6 +3,7 @@ using Application.DTOs.Company;
 using Application.Interfaces.Repository;
 using AutoMapper;
 using Domain;
+using Domain.Interfaces;
 using Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;

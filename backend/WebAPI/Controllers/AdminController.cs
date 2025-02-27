@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using Domain;
+using Domain.Interfaces;
 using WebAPI.Validation.Admin;
 
 namespace WebAPI.Controllers
@@ -71,7 +72,7 @@ namespace WebAPI.Controllers
                 return BadRequest(new AdminResult(false,null, $"This user is taken {username}"));
             }
 
-            var admin = new Admin
+            Admin admin = new Admin
             {
                 Email = request.Email,
                 UserName = request.Username,
