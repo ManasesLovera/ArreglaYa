@@ -1,10 +1,9 @@
-﻿using Application.DTOs.Admin;
-using Application.DTOs.Client;
+﻿using Application.DTOs.Account;
 using FluentValidation;
 
 namespace WebAPI.Validation.Client
 {
-    public class CreateClientValidator : AbstractValidator<RegisterClientDto>
+    public class CreateClientValidator : AbstractValidator<RegisterEntityRequest>
     {
         public CreateClientValidator()
         {
