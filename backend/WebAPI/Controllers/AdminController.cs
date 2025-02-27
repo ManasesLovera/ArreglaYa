@@ -1,14 +1,11 @@
-﻿using Application.DTOs.Admin;
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.Models;
 using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 using Domain;
-using WebAPI.Validation.Admin;
+using Application.DTOs.Account;
+using Application.DTOs.Common;
 
 namespace WebAPI.Controllers
 {
@@ -21,34 +18,34 @@ namespace WebAPI.Controllers
         private readonly IMapper _mapper;
 
         public AdminController(SignInManager<IUser> signInManager, UserManager<IUser> userManager, IMapper mapper, 
-            IValidator<RegisterRequest> validator) : base(validator)
+            IValidator<RegisterEntityRequest> validator) : base(validator)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _mapper = mapper;
         }
 
-        [HttpGet()]
-        public async Task<ActionResult<AdminDTos>> GetAdminById([FromQuery]string id)
+        [HttpGet]
+        public async Task<ActionResult<RegisterEntityResponse>> GetAdminById([FromQuery]string id)
         {
             try
             {
                 var admin = await _userManager.FindByIdAsync(id);
                 if (admin == null)
                 {
-                    return NotFound(new AdminResult(false, null, "Admin not found"));
+                    return NotFound(ApiResponse<string>.ErrorResponse("Admin not found"));
                 }
-                var adminDto = _mapper.Map<AdminDTos>(admin);
-                return Ok(new AdminResult(true, adminDto, "Query successful"));
+                var adminDto = _mapper.Map<RegisterEntityResponse>(admin);
+                return Ok(ApiResponse<RegisterEntityResponse>.SuccessResponse(adminDto));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new AdminResult(false, null, $"Internal Server Error: {ex.Message}"));
+                return StatusCode(500,  ApiResponse<string>.ErrorResponse($"Internal Server Error: {ex.Message}"));
             }
         }
 
-        [HttpPost("add")]
-        public async Task<ActionResult<AdminDTos>> Create(RegisterRequest request)
+        [HttpPost]
+        public async Task<ActionResult<RegisterEntityResponse>> Create(RegisterEntityRequest request)
         {
             var result = await _validator.ValidateAsync(request);
 
@@ -61,14 +58,14 @@ namespace WebAPI.Controllers
 
             if (email != null)
             {
-                return NotFound(new AdminResult(false, null, $"This email is taken {email}"));
+                return NotFound(ApiResponse<string>.ErrorResponse($"This email is taken {email}"));
             }
 
             var username = await _userManager.FindByEmailAsync(request.Username);
 
             if (username != null)
             {
-                return BadRequest(new AdminResult(false,null, $"This user is taken {username}"));
+                return BadRequest(ApiResponse<string>.ErrorResponse($"This user is taken {username}"));
             }
 
             var admin = new Admin
@@ -85,7 +82,7 @@ namespace WebAPI.Controllers
                 return BadRequest("An error ocurred trying to registed the user");
             }
 
-            var responseDto = _mapper.Map<RegisterResponse>(admin);
+            var responseDto = _mapper.Map<RegisterEntityResponse>(admin);
 
             return CreatedAtAction(nameof(GetAdminById),new {Id = admin.Id}, responseDto);
 
@@ -95,15 +92,13 @@ namespace WebAPI.Controllers
         public async Task<ActionResult> Delete(string id)
         {
             var adminId = await _userManager.FindByIdAsync(id);
-
             if (adminId != null)
             {
                 await _userManager.DeleteAsync(adminId);
-                var adminDto = _mapper.Map<AdminDTos>(adminId);
+                var adminDto = _mapper.Map<RegisterEntityResponse>(adminId);
                 return NoContent();
             }
-
-            return NotFound("User not found");
+            return NotFound(ApiResponse<string>.ErrorResponse($"{adminId} not found"));
         }
     }
 }
