@@ -4,6 +4,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Domain;
+using Application.DTOs.Account;
+using Domain.Interfaces;
+using Application.DTOs.Common;
 
 namespace WebAPI.Controllers
 {
@@ -23,8 +26,8 @@ namespace WebAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<RegisterEntityResponse>> GetAdminById([FromQuery]string id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<RegisterEntityResponse>> GetAdminById([FromRoute]string id)
         {
             try
             {
