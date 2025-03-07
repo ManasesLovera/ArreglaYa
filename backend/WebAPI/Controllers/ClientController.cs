@@ -1,11 +1,10 @@
-﻿using Application.DTOs.Admin;
-using Application.DTOs.Client;
+﻿using Application.DTOs.Account;
+using Application.DTOs.Common;
 using AutoMapper;
 using Domain;
 using Domain.Interfaces;
 using Domain.Models;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +17,12 @@ namespace WebAPI.Controllers
         private readonly SignInManager<IUser> _signInManager;
         private readonly UserManager<IUser> _userManager;
         private readonly IMapper _mapper;
-        private readonly IValidator<RegisterClientDto> _validator;
+        private readonly IValidator<RegisterEntityRequest> _validator;
 
         public ClientController(
             SignInManager<IUser> signInManager, 
             UserManager<IUser> userManager, 
-            IMapper mapper, IValidator<RegisterClientDto> validator)
+            IMapper mapper, IValidator<RegisterEntityRequest> validator)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -32,27 +31,27 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ClientDto>> GetByIdClient([FromRoute] string id)
+        public async Task<ActionResult<RegisterEntityResponse>> GetByIdClient([FromRoute] string id)
         {
             try
             {
-             var client = await _userManager.FindByIdAsync(id);
-
-             if (client == null)
-             { 
-                return NotFound(new ClientResult(false, null, $"this Id {id} not found"));
-             }
-             var clientDto = _mapper.Map<ClientDto>(client);
-             return Ok(new ClientResult(true, clientDto, "Query successful"));
+                var client = await _userManager.FindByIdAsync(id);
+        
+                if (client == null)
+                { 
+                    return NotFound(ApiResponse<string>.ErrorResponse($"this Id {id} not found"));
+                }
+                var clientDto = _mapper.Map<RegisterEntityResponse>(client);
+                return Ok(ApiResponse<RegisterEntityResponse>.SuccessResponse(clientDto));
             }
             catch (Exception ex)
-            {
-                return StatusCode(500, new AdminResult(false, null, $"Internal Server Error: {ex.Message}"));
+            { 
+                return StatusCode(500, ApiResponse<string>.ErrorResponse($"Internal Server Error: {ex.Message}"));
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateClient([FromBody] RegisterClientDto request)
+        public async Task<IActionResult> CreateClient([FromBody] RegisterEntityRequest request)
         {
 
             var result = await _validator.ValidateAsync(request);
@@ -64,13 +63,13 @@ namespace WebAPI.Controllers
             var userWithEmail = await _userManager.FindByEmailAsync(request.Email);
             if (userWithEmail != null)
             {
-                return BadRequest(new ClientResult(false, null, $"This email {request.Email} is taken"));
+                return BadRequest(ApiResponse<string>.ErrorResponse($"This email {request.Email} is taken"));
             }
 
             var username = await _userManager.FindByNameAsync(request.Username);
             if (username != null)
             {
-                return BadRequest(new ClientResult(false,null, $"this username {request.Username} is taken"));
+                return BadRequest(ApiResponse<string>.ErrorResponse($"this username {request.Username} is taken"));
             }
 
             Client client = new()
@@ -86,12 +85,12 @@ namespace WebAPI.Controllers
                 return BadRequest(resultUser.Errors);
             }
 
-            var response = _mapper.Map<RegisterResponse>(client);
+            var response = _mapper.Map<RegisterEntityResponse>(client);
             return CreatedAtAction(nameof(GetByIdClient), new {Id = client.Id}, response);
         }
 
         [HttpDelete("{Id}")]
-        public async Task<ActionResult<ClientDto>> DeleteByIdClient([FromRoute] string id)
+        public async Task<ActionResult<RegisterEntityRequest>> DeleteByIdClient([FromRoute] string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
@@ -99,8 +98,7 @@ namespace WebAPI.Controllers
                 await _userManager.DeleteAsync(user);
                 return NoContent();
             }
-
-            return NotFound(new ClientResult(false, null, $"this Id {id} not found"));
+            return NotFound(ApiResponse<string>.ErrorResponse($"this Id {id} not found"));
         }
 
     }

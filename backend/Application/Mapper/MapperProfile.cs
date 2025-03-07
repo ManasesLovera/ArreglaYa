@@ -1,12 +1,6 @@
-﻿using Application.DTOs.Admin;
-using Application.DTOs.Client;
+﻿using Application.DTOs.Account;
 using AutoMapper;
 using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Mapper
 {
@@ -15,19 +9,19 @@ namespace Application.Mapper
         public MapperProfile()
         {
             #region Admin
-            CreateMap<Admin, AdminDTos>();
-            CreateMap<AdminDTos, Admin>();
+            CreateMap<Admin, RegisterEntityResponse>();
+            CreateMap<RegisterEntityResponse, Admin>();
 
-            CreateMap<Admin, RegisterResponse>();
-            CreateMap<RegisterResponse, Admin>();
+            CreateMap<Admin, RegisterEntityResponse>();
+            CreateMap<RegisterEntityResponse, Admin>();
             #endregion
 
             #region Client
-            CreateMap<Client, ClientDto>();
-            CreateMap<ClientDto, Client>();
+            CreateMap<Client, RegisterEntityResponse>();
+            CreateMap<RegisterEntityResponse, Client>();
 
-            CreateMap<Client, RegisterResponse>();
-            CreateMap<RegisterResponse, Client>();
+            CreateMap<Client, RegisterEntityResponse>();
+            CreateMap<RegisterEntityResponse, Client>();
             #endregion
         }
 

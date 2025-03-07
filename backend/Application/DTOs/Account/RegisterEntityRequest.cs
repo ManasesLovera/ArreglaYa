@@ -1,17 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs.Admin
+namespace Application.DTOs.Account
 {
-    public record AdminDTos 
+    public record RegisterEntityRequest
     (
-        string Id,
         string Email,
         string Username,
+        string Password,
         string FullName
     );
 }
