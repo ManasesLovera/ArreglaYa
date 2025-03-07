@@ -35,14 +35,14 @@ namespace WebAPI.Controllers
         {
             try
             {
-             var client = await _userManager.FindByIdAsync(id);
-
+                var client = await _userManager.FindByIdAsync(id);
+        
                 if (client == null)
                 { 
                     return NotFound(ApiResponse<string>.ErrorResponse($"this Id {id} not found"));
                 }
-                    var clientDto = _mapper.Map<RegisterEntityResponse>(client);
-                    return Ok(ApiResponse<RegisterEntityResponse>.SuccessResponse(clientDto));
+                var clientDto = _mapper.Map<RegisterEntityResponse>(client);
+                return Ok(ApiResponse<RegisterEntityResponse>.SuccessResponse(clientDto));
             }
             catch (Exception ex)
             { 
