@@ -1,11 +1,11 @@
-﻿using Application.DTOs.Company;
+﻿using Application.DTOs.User;
 using FluentValidation;
 
-namespace WebAPI.Validation.Company
+namespace WebAPI.Validation.User
 {
-    public class CreateCompanyValidator : AbstractValidator<CreateCompanyRequest>
+    public class CreateUserValidator : AbstractValidator<CreateUserRequest>
     {
-        public CreateCompanyValidator()
+        public CreateUserValidator()
         {
             RuleFor(x => x.Fullname)
                 .NotNull().NotEmpty()

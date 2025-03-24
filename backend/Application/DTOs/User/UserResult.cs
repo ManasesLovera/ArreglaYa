@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs.Admin
+namespace Application.DTOs.User
 {
-    public record AdminResult
+    public record UserResult
     (
         bool IsSuccessful,
-        AdminDTos Admin,
+        UserResponse? Company,
         string Message
     );
 }

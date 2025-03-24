@@ -1,8 +1,7 @@
-﻿using Application.DTOs.Admin;
-using Application.DTOs.Company;
+﻿using Application.DTOs.Common;
+using Application.DTOs.User;
 using FluentValidation;
-using WebAPI.Validation.Admin;
-using WebAPI.Validation.Company;
+using WebAPI.Validation.User;
 
 namespace WebAPI.Validation
 {
@@ -10,8 +9,8 @@ namespace WebAPI.Validation
     {
         public static void AddValidators(this IServiceCollection services)
         {
-            services.AddScoped<IValidator<RegisterRequest>, CreateAdminValidator>();
-            services.AddScoped<IValidator<CreateCompanyRequest>, CreateCompanyValidator>();
+            services.AddScoped<IValidator<CreateUserRequest>, CreateUserValidator>();
+            services.AddScoped<IValidator<UpdatePasswordRequest>, UpdatePasswordRequestValidator>();
         }
     }
 }

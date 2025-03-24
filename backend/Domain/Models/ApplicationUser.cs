@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Models
 {
-    public class Client : IdentityUser, IUser
+    public class ApplicationUser : IdentityUser
     {
         public string FullName { get; set; } = String.Empty;
-        public ICollection<Transaction>? Transactions { get; set; }
     }
 }

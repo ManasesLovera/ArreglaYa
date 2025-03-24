@@ -2,9 +2,6 @@ using Infraestructure.Data;
 using Infraestructure.IOC;
 using Microsoft.EntityFrameworkCore;
 using Application.IOC;
-using FluentValidation;
-using Application.DTOs.Admin;
-using WebAPI.Validation.Admin;
 using WebAPI.Validation;
 
 var builder = WebApplication.CreateBuilder(args);

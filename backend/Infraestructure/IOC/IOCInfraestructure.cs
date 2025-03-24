@@ -21,13 +21,11 @@ namespace Infraestructure.IOC
         {
             #region Context
             services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseSqlite(configuration.GetConnectionString("SQLiteConnection"), b => b.MigrationsAssembly("Infraestructure.IOC"));
-            });
+                options.UseSqlite(configuration.GetConnectionString("SQLiteConnection"), b => b.MigrationsAssembly("Infraestructure.IOC")));
             #endregion
 
             #region Identity
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                      .AddEntityFrameworkStores<ApplicationDbContext>()
                      .AddDefaultTokenProviders();
             #endregion

@@ -21,8 +21,6 @@ namespace Domain.Models
 
         public string? CompanyId { get; set; }
 
-        public Company? Company { get; set; }
-
         public ICollection<Transaction>? Transactions { get; set; }
     }
 }

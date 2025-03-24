@@ -15,8 +15,6 @@ namespace Domain.Models
 
         public string? ClientId { get; set; }
 
-        public Client? Client { get; set; }
-
         public int CompanyServiceId { get; set; }
 
         public CompanyService? CompanyService { get; set; }

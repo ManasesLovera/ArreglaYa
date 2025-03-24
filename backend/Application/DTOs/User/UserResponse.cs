@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs.Company
+namespace Application.DTOs.User
 {
-    public record CompanyResponse
+    public record UserResponse
     (
         string FullName,
         string UserName,

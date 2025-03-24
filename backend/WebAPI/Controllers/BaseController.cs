@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Admin;
+﻿using Application.DTOs.User;
+using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,11 +9,11 @@ namespace WebAPI.Controllers
   
     public class BaseController : ControllerBase
     {
-        protected readonly IValidator<RegisterRequest> _validator;
+        protected readonly IMapper _mapper;
 
-        public BaseController(IValidator<RegisterRequest> validator)
+        public BaseController(IMapper mapper)
         {
-            _validator = validator;
+            _mapper = mapper;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Company;
+﻿using Application.DTOs.User;
 using AutoMapper;
 using Domain.Models;
 using System;
@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Application.Mapper
 {
-    public class CompanyMapper : Profile
+    public class UserMapper : Profile
     {
-        public CompanyMapper()
+        public UserMapper()
         {
-            CreateMap<CreateCompanyRequest, Company>();
-            CreateMap<Company, CompanyResponse>();
+            CreateMap<CreateUserRequest, ApplicationUser>();
+            CreateMap<ApplicationUser, UserResponse>();
         }
     }
 }

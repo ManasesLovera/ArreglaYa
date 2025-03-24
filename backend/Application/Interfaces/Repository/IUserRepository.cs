@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces.Repository
 {
-    public interface ICompanyRepository : IGenericRepository<Company>
+    public interface IUserRepository : IGenericRepository<ApplicationUser>
     {
     }
 }
