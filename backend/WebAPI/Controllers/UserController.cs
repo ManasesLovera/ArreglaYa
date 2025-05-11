@@ -13,7 +13,7 @@ namespace WebAPI.Controllers
     /// <summary>
     /// Controller for managing user-related operations.
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : BaseController
     {
@@ -48,23 +48,23 @@ namespace WebAPI.Controllers
         /// Retrieves a user by its ID.
         /// </summary>
         /// <param name="id">The ID of the user.</param>
-        [HttpGet("id")]
-        public async Task<ActionResult<UserResponse>> GetByIdAsync(string id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserResult>> GetByIdAsync(string id)
         {
-            var company = await _userRepo.GetByIdAsync(id);
-            if (company == null)
+            var user = await _userRepo.GetByIdAsync(id);
+            if (user == null)
             {
-                return NotFound();
+                return NotFound(new UserResult(false, "User was not found"));
             }
-            return Ok(_mapper.Map<UserResponse>(company));
+            return Ok(new UserResult(true, User: _mapper.Map<UserResponse>(user)));
         }
 
         /// <summary>
         /// Creates a new user.
         /// </summary>
-        /// <param name="userRequest">The request data for creating a company.</param>
+        /// <param name="userRequest">The request data for creating a user.</param>
         [HttpPost]
-        public async Task<ActionResult<UserResult>> CreateCompany(IValidator<CreateUserRequest> validator, [FromBody] CreateUserRequest userRequest)
+        public async Task<ActionResult<UserResult>> CreateAsync(IValidator<CreateUserRequest> validator, [FromBody] CreateUserRequest userRequest)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace WebAPI.Controllers
                 if (!validationResult.IsValid)
                 {
                     return BadRequest(new UserResult(
-                            false, null, string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage))
+                            false, string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage))
                         ));
                 }
 
@@ -80,7 +80,7 @@ namespace WebAPI.Controllers
                 if (existingUser != null)
                 {
                     return Conflict(new UserResult(
-                            false, null, "Email is already in use."
+                            false, "Email is already in use."
                         ));
                 }
 
@@ -90,18 +90,19 @@ namespace WebAPI.Controllers
                 {
                     return BadRequest(new UserResult(
                         false,
-                        null,
                         string.Join("; ", result.Errors.Select(e => e.Description))
                     ));
                 }
 
                 var userResponse = _mapper.Map<UserResponse>(user);
                 return CreatedAtAction(nameof(GetByIdAsync), new { id = user.Id }, 
-                    new UserResult(true, userResponse, "User created successfully."));
+                    new UserResult(
+                        IsSuccessful: true, 
+                        User: userResponse));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new UserResult(false, null, ex.Message));
+                return StatusCode(500, new UserResult(false, ex.Message));
             }
         }
 
@@ -110,7 +111,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="id">The ID of the user to delete.</param>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        public async Task<IActionResult> DeleteAsync(string id)
         {
             var user = await _userRepo.GetByIdAsync(id);
             if (user == null)
@@ -127,8 +128,8 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="id">The ID of the user.</param>
         /// <param name="request">The request containing the old and new passwords.</param>
-        [HttpPut("{id}/password")]
-        public async Task<IActionResult> UpdatePassword([FromRoute] string id, [FromBody] UpdatePasswordRequest request)
+        [HttpPatch("{id}/update-password")]
+        public async Task<IActionResult> UpdatePasswordAsync([FromRoute] string id, [FromBody] UpdatePasswordRequest request)
         {
             var user = await _userRepo.GetByIdAsync(id);
             if (user == null)
@@ -136,13 +137,14 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
 
-            var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            // Validates password and updates it if succeded
+            var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
             if (!result.Succeeded)
             {
                 return BadRequest(string.Join("; ", result.Errors.Select(e => e.Description)));
             }
 
-            return NoContent();
+            return Ok();
         }
     }
 }

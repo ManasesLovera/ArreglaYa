@@ -8,7 +8,7 @@ namespace Application.DTOs.Common
 {
     public record UpdatePasswordRequest
     (
-        string OldPassword,
+        string CurrentPassword,
         string NewPassword
     );
 }

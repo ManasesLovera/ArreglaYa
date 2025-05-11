@@ -8,8 +8,10 @@ namespace Application.DTOs.User
 {
     public record UserResponse
     (
+        string Id,
         string FullName,
         string UserName,
-        string Email
+        string Email,
+        bool IsActive
     );
 }

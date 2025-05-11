@@ -14,7 +14,6 @@ namespace Application.IOC
         public static void AddAplicationLayer(this IServiceCollection services)
         {
             #region Mapper
-            services.AddAutoMapper(typeof(MapperProfile));
             services.AddAutoMapper(typeof(UserMapper));
             #endregion
         }

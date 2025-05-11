@@ -9,7 +9,7 @@ namespace Application.DTOs.User
     public record UserResult
     (
         bool IsSuccessful,
-        UserResponse? Company,
-        string Message
+        string? Message = null,
+        UserResponse? User = null
     );
 }
