@@ -14,6 +14,9 @@ namespace Domain.Models
         /// </summary>
         public string FullName { get; set; } = String.Empty;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the user account is active.
+        /// </summary>
         public bool IsActive { get; set; } = false;
 
         #region Company
