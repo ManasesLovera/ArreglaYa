@@ -1,7 +1,7 @@
 ﻿using Application.Interfaces.Repository;
 using Domain.Models;
-using Infraestructure.Data;
-using Infraestructure.Repositories;
+using Infrastructure.Data;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,15 +13,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain;
 
-namespace Infraestructure.IOC
+namespace Infrastructure.IOC
 {
-    public static class IOCInfraestructure
+    public static class IOCInfrastructure
     {
         public static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
         {
             #region Context
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(configuration.GetConnectionString("SQLiteConnection"), b => b.MigrationsAssembly("Infraestructure.IOC")));
+                options.UseSqlite(configuration.GetConnectionString("SQLiteConnection")));
             #endregion
 
             #region Identity
@@ -31,7 +31,7 @@ namespace Infraestructure.IOC
             #endregion
 
             #region Repositories
-            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUserRepository, UserRepository>();
             #endregion
         }
     }

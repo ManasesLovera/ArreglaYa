@@ -1,13 +1,13 @@
 ﻿using Application.Interfaces.Repository;
 using Domain.Models;
-using Infraestructure.Data;
+using Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infraestructure.Repositories
+namespace Infrastructure.Repositories
 {
     public class UserRepository : GenericRepository<ApplicationUser>, IUserRepository
     {

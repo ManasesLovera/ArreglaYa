@@ -4,19 +4,25 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Domain.Enums;
 
 namespace Domain.Models
 {
     public class Transaction
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        public TransactionStatus Status { get; set; } = TransactionStatus.Pending;
 
         public string? ClientId { get; set; }
 
-        public int CompanyServiceId { get; set; }
+        public string? CompanyServiceId { get; set; }
 
+        [ForeignKey(nameof(CompanyServiceId))]
         public CompanyService? CompanyService { get; set; }
+
+        [ForeignKey(nameof(ClientId))]
+        public ApplicationUser? Client { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Application.Interfaces.Repository;
-using Infraestructure.Data;
+using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infraestructure.Repositories
+namespace Infrastructure.Repositories
 {
     /// <summary>
     /// Generic repository providing CRUD operations for entities.
