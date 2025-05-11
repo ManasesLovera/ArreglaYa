@@ -1,19 +1,23 @@
-using Infraestructure.Data;
-using Infraestructure.IOC;
-using Microsoft.EntityFrameworkCore;
+using Infrastructure.Data;
+using Infrastructure.IOC;
 using Application.IOC;
 using WebAPI.Validation;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    // Prevent ASP.NET Core from removing the 'Async' suffix in action method names.
+    // This ensures that link generation (e.g., CreatedAtAction) works when using methods named like GetByIdAsync.
+    // Recommended when following the async method naming convention across controllers.
+    options.SuppressAsyncSuffixInActionNames = false;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//DI
+// Dependency Injection from other layers
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddAplicationLayer();
 builder.Services.AddValidators();
