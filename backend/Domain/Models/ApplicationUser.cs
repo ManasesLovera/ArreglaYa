@@ -17,7 +17,17 @@ namespace Domain.Models
         /// <summary>
         /// Gets or sets a value indicating whether the user account is active.
         /// </summary>
-        public bool IsActive { get; set; } = false;
+        public bool IsActive { get; set; } = true;
+
+        /// <summary>
+        /// Stores the current refresh token issued to the user.
+        /// </summary>
+        public string? RefreshToken { get; set; }
+
+        /// <summary>
+        /// Expiry date and time for the refresh token.
+        /// </summary>
+        public DateTime RefreshTokenExpiryTime { get; set; }
 
         #region Company
         /// <summary>

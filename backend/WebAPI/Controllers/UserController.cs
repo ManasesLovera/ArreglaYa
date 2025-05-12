@@ -2,11 +2,12 @@
 using Application.DTOs.User;
 using Application.Interfaces.Repository;
 using AutoMapper;
-using Domain;
 using Domain.Models;
-using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace WebAPI.Controllers
 {
@@ -15,6 +16,7 @@ namespace WebAPI.Controllers
     /// </summary>
     [Route("api/user")]
     [ApiController]
+    [Authorize]
     public class UserController : BaseController
     {
         private readonly IUserRepository _userRepo;
@@ -32,6 +34,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <returns>A IEnumerable with all users.</returns>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<PaginatedResponse<UserResponse>> GetPaginatedAsync([FromQuery] PaginationQuery query)
         {
             var users = await _userRepo.GetPaginatedAsync(query.PageIndex, query.PageSize);
@@ -49,6 +52,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="id">The ID of the user.</param>
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserResult>> GetByIdAsync(string id)
         {
             var user = await _userRepo.GetByIdAsync(id);
@@ -60,57 +64,11 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// Creates a new user.
-        /// </summary>
-        /// <param name="userRequest">The request data for creating a user.</param>
-        [HttpPost]
-        public async Task<ActionResult<UserResult>> CreateAsync(IValidator<CreateUserRequest> validator, [FromBody] CreateUserRequest userRequest)
-        {
-            try
-            {
-                var validationResult = await validator.ValidateAsync(userRequest);
-                if (!validationResult.IsValid)
-                {
-                    return BadRequest(new UserResult(
-                            false, string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage))
-                        ));
-                }
-
-                var existingUser = await _userManager.FindByEmailAsync(userRequest.Email);
-                if (existingUser != null)
-                {
-                    return Conflict(new UserResult(
-                            false, "Email is already in use."
-                        ));
-                }
-
-                var user = _mapper.Map<ApplicationUser>(userRequest);
-                var result = await _userManager.CreateAsync(user, userRequest.Password);
-                if (!result.Succeeded)
-                {
-                    return BadRequest(new UserResult(
-                        false,
-                        string.Join("; ", result.Errors.Select(e => e.Description))
-                    ));
-                }
-
-                var userResponse = _mapper.Map<UserResponse>(user);
-                return CreatedAtAction(nameof(GetByIdAsync), new { id = user.Id }, 
-                    new UserResult(
-                        IsSuccessful: true, 
-                        User: userResponse));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new UserResult(false, ex.Message));
-            }
-        }
-
-        /// <summary>
         /// Deletes a user by its ID.
         /// </summary>
         /// <param name="id">The ID of the user to delete.</param>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
             var user = await _userRepo.GetByIdAsync(id);
@@ -124,27 +82,28 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// Updates the password of a user.
+        /// Updates the password of the currently logged-in user.
         /// </summary>
-        /// <param name="id">The ID of the user.</param>
         /// <param name="request">The request containing the old and new passwords.</param>
-        [HttpPatch("{id}/update-password")]
-        public async Task<IActionResult> UpdatePasswordAsync([FromRoute] string id, [FromBody] UpdatePasswordRequest request)
+        [Authorize]
+        [HttpPatch("update-password")]
+        public async Task<IActionResult> UpdatePasswordAsync([FromBody] UpdatePasswordRequest request)
         {
-            var user = await _userRepo.GetByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                      ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub); // fallback if needed
 
-            // Validates password and updates it if succeded
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Invalid token or missing user ID.");
+
+            var user = await _userRepo.GetByIdAsync(userId);
+            if (user == null)
+                return NotFound();
+
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
             if (!result.Succeeded)
-            {
                 return BadRequest(string.Join("; ", result.Errors.Select(e => e.Description)));
-            }
 
-            return Ok();
+            return Ok("Password updated successfully.");
         }
     }
 }
