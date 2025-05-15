@@ -8,10 +8,12 @@ namespace WebAPI.Validation.Account
         public VerifyEmailRequestValidator()
         {
             RuleFor(x => x.UserId)
-                .NotEmpty().NotNull().WithMessage("{PropertyName} cannot be null");
+                .NotEmpty().WithMessage("{PropertyName} is required.")
+                .MaximumLength(100).WithMessage("{PropertyName} cannot exceed 100 characters.");
 
             RuleFor(x => x.Token)
-                .NotEmpty().NotNull().WithMessage("{PropertyName} cannot be null");
+                .NotEmpty().WithMessage("{PropertyName} is required.")
+                .MaximumLength(500).WithMessage("{PropertyName} cannot exceed 500 characters.");
         }
     }
 }

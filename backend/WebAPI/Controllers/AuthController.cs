@@ -1,13 +1,10 @@
 ﻿using Application.DTOs.Account;
 using Application.DTOs.User;
-using Application.Mapper;
 using AutoMapper;
 using Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -35,13 +32,21 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Me()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized();
+            
             var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return NotFound();
-            return Ok(_mapper.Map<UserResponse>(user));
+            if (user == null) 
+                return NotFound();
+
+            var userResponse = _mapper.Map<UserResponse>(user);
+            userResponse.Roles = (await _userManager.GetRolesAsync(user)).ToArray();
+            return Ok(userResponse);
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest request)
+        public async Task<IActionResult> Login(
+            [FromBody] LoginRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
 
@@ -67,7 +72,7 @@ namespace WebAPI.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(60)
             });
 
@@ -75,20 +80,22 @@ namespace WebAPI.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(7)
             });
 
+            var userResponse = _mapper.Map<UserResponse>(user);
+            userResponse.Roles = (await _userManager.GetRolesAsync(user)).ToArray();
             var response = new
             {
-                User = _mapper.Map<UserResponse>(user)
+                User = userResponse
             };
 
             return Ok(response); // Or return 204 NoContent
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        public async Task<IActionResult> RefreshToken()
         {
             var refreshToken = Request.Cookies["RefreshToken"];
 
@@ -132,7 +139,7 @@ namespace WebAPI.Controllers
 
 
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout([FromBody] RefreshTokenRequest request)
+        public async Task<IActionResult> Logout()
         {
             var refreshToken = Request.Cookies["RefreshToken"];
 
@@ -157,13 +164,15 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(IValidator<Application.DTOs.Account.RegisterRequest> validator, [FromBody]Application.DTOs.Account.RegisterRequest request)
+        public async Task<IActionResult> Register(
+            [FromBody] RegisterRequest request,
+            [FromServices] IValidator<RegisterRequest> validator)
         {
             var validation = await validator.ValidateAsync(request);
             if (!validation.IsValid)
                 return BadRequest(validation.ToDictionary());
 
-            var userExist = await _userManager.FindByEmailAsync(request.Email);
+            var userExist = await _userManager.FindByEmailAsync(request.Email!);
 
             if (userExist == null)
                 return Conflict("This email is in used");
@@ -171,7 +180,7 @@ namespace WebAPI.Controllers
 
             var user = _mapper.Map<ApplicationUser>(request);
 
-            var result = await _userManager.CreateAsync(user, request.Password);
+            var result = await _userManager.CreateAsync(user, request.Password!);
             if (!result.Succeeded)
             {
                 return Conflict(result.Errors);
@@ -187,7 +196,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("verify-email")]
-        public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailRequest request, IValidator<VerifyEmailRequest> validator)
+        public async Task<IActionResult> VerifyEmail(
+            [FromBody] VerifyEmailRequest request, 
+            [FromServices] IValidator<VerifyEmailRequest> validator)
         {
             var validation = await validator.ValidateAsync(request);
             if (!validation.IsValid)
@@ -200,6 +211,5 @@ namespace WebAPI.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, request.Token);
             return result.Succeeded ? Ok("Email confirmed.") : BadRequest(result.Errors);
         }
-
     }
 }

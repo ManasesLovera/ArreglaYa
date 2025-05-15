@@ -14,7 +14,8 @@ namespace Application.Mapper
         public UserMapper()
         {
             CreateMap<CreateUserRequest, ApplicationUser>();
-            CreateMap<ApplicationUser, UserResponse>();
+            CreateMap<ApplicationUser, UserResponse>()
+                .ForMember(dest => dest.Roles, opt => opt.Ignore());
         }
     }
 }
