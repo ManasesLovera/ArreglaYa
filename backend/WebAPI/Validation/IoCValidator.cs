@@ -15,6 +15,7 @@ namespace WebAPI.Validation
             services.AddScoped<IValidator<UpdatePasswordRequest>, UpdatePasswordRequestValidator>();
             services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
             services.AddScoped<IValidator<VerifyEmailRequest>, VerifyEmailRequestValidator>();
+            services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
         }
     }
 }
