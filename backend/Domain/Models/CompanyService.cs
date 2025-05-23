@@ -11,28 +11,31 @@ namespace Domain.Models;
 /// <summary>
 /// Represents a service offered by a company.
 /// </summary>
-public class CompanyService
-{
+    public class CompanyService
+    {
     /// <summary>
     /// Gets or sets the unique identifier for the service.
     /// </summary>
     [Key]
-    public int Id { get; set; }
-
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     /// <summary>
     /// Gets or sets the name of the service.
     /// </summary>
-    public string? Name { get; set; }
-
+    public required string Name { get; set; }
     /// <summary>
     /// Gets or sets the description of the service.
     /// </summary>
-    public string? Description { get; set; }
+    public required string Description { get; set; }
 
     /// <summary>
     /// Gets or sets the price of the service.
     /// </summary>
     public decimal Price { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the service is currently active.
+    /// </summary>
+    public bool IsActive { get; set; }
 
     /// <summary>
     /// Gets or sets the ID of the company offering the service.
@@ -42,10 +45,11 @@ public class CompanyService
     /// <summary>
     /// Gets or sets the company offering the service.
     /// </summary>
-    public Company? Company { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public ApplicationUser? Company { get; set; }
 
     /// <summary>
     /// Gets or sets the collection of transactions associated with the service.
     /// </summary>
-    public ICollection<Transaction>? Transactions { get; set; }
+    public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

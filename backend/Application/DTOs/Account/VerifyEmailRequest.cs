@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs.Common
+namespace Application.DTOs.Account
 {
-    public record UpdatePasswordRequest
+    public sealed record VerifyEmailRequest
     (
-        string CurrentPassword,
-        string NewPassword
+        string UserId,
+        string Token
     );
 }
