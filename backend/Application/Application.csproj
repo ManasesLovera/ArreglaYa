@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="Interfaces\IAuthService.cs" />
+    <Compile Include="Services\AuthService.cs" />
+  </ItemGroup>
+
 </Project>
