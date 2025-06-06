@@ -6,27 +6,50 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Models
-{
+namespace Domain.Models;
+
+/// <summary>
+/// Represents a service offered by a company.
+/// </summary>
     public class CompanyService
     {
-        [Key]
-        public int Id { get; set; }
+    /// <summary>
+    /// Gets or sets the unique identifier for the service.
+    /// </summary>
+    [Key]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    /// <summary>
+    /// Gets or sets the name of the service.
+    /// </summary>
+    public required string Name { get; set; }
+    /// <summary>
+    /// Gets or sets the description of the service.
+    /// </summary>
+    public required string Description { get; set; }
 
-        public string? Name { get; set; }
+    /// <summary>
+    /// Gets or sets the price of the service.
+    /// </summary>
+    public decimal Price { get; set; }
 
-        public string? Description { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether the service is currently active.
+    /// </summary>
+    public bool IsActive { get; set; }
 
-        public decimal Price { get; set; }
+    /// <summary>
+    /// Gets or sets the ID of the company offering the service.
+    /// </summary>
+    public string? CompanyId { get; set; }
 
-        public int UserId { get; set; }
+    /// <summary>
+    /// Gets or sets the company offering the service.
+    /// </summary>
+    [ForeignKey(nameof(CompanyId))]
+    public ApplicationUser? Company { get; set; }
 
-        public User? User { get; set; }
-
-        public int CompanyId { get; set; }
-
-        public Company? Company { get; set; }
-
-        public ICollection<Transaction>? Transactions { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the collection of transactions associated with the service.
+    /// </summary>
+    public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

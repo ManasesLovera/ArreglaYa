@@ -1,0 +1,7 @@
+WebAPI/arreglaya.db
+WebAPI/arreglaya.db-shm
+WebAPI/arreglaya.db-wal
+Infrastructure/Migrations
+.idea/
+bin/
+obj/
