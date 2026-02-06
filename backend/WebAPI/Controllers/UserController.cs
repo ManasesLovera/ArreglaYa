@@ -56,7 +56,7 @@ namespace WebAPI.Controllers
         {
             var result = await _userService.GetUserByIdAsync(id);
             
-            if (!result.Success)
+            if (!result.IsSuccess)
             {
                 return NotFound(result);
             }
@@ -88,7 +88,7 @@ namespace WebAPI.Controllers
 
             var result = await _userService.CreateUserAsync(request);
 
-            if (!result.Success)
+            if (!result.IsSuccess)
             {
                 // Check if it's a conflict (username/email already exists)
                 if (result.Message.Contains("already taken") || result.Message.Contains("already registered"))
