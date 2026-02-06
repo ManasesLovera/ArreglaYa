@@ -36,6 +36,7 @@ namespace Application.IOC
             // The important part is adding the IAuthService.
 
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUserService, UserService>();
 
             return services;
         }

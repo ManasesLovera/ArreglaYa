@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.Account
+﻿namespace Application.DTOs.Account
 {
+    /// <summary>
+    /// Represents a login request containing user credentials.
+    /// </summary>
     public sealed class LoginRequest
     {
         /// <summary>
-        /// The user's email address which acts as a user name.
+        /// Gets or initializes the user's email address which acts as a user name.
         /// </summary>
         public required string Email { get; init; }
 
         /// <summary>
-        /// The user's password.
+        /// Gets or initializes the user's password.
         /// </summary>
         public required string Password { get; init; }
     }

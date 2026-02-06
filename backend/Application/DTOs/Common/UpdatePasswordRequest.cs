@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.Common
+﻿namespace Application.DTOs.Common
 {
+    /// <summary>
+    /// Represents a request to update a user's password.
+    /// </summary>
+    /// <param name="CurrentPassword">The user's current password for verification.</param>
+    /// <param name="NewPassword">The new password to set for the user.</param>
     public record UpdatePasswordRequest
     (
         string CurrentPassword,

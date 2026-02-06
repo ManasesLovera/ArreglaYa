@@ -1,15 +1,25 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Application.Auth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace WebAPI.Auth.Jwt
 {
+    /// <summary>
+    /// Extension methods for configuring JWT authentication services.
+    /// </summary>
     public static class JwtServiceExtensions
     {
+        /// <summary>
+        /// Adds JWT authentication to the service collection.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="configuration">The application configuration.</param>
+        /// <returns>The service collection for chaining.</returns>
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
-            var key = Encoding.UTF8.GetBytes(jwtSettings!.Secret ?? String.Empty);
+            var key = Encoding.UTF8.GetBytes(jwtSettings!.Secret ?? string.Empty);
 
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
@@ -27,7 +37,7 @@ namespace WebAPI.Auth.Jwt
                     {
                         OnMessageReceived = context =>
                         {
-                            // ✅ Look for token in HttpOnly cookie named "AccessToken"
+                            // Look for token in HttpOnly cookie named "AccessToken"
                             if (context.Request.Cookies.TryGetValue("AccessToken", out var token))
                             {
                                 context.Token = token;

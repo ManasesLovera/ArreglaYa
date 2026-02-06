@@ -6,10 +6,10 @@ using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using WebAPI.Auth.Jwt;
+using Application.Auth;
 using System;
 using System.Linq;
-using System.Threading.Tasks; // Ensure Task is available
+using System.Threading.Tasks;
 
 namespace Application.Services
 {

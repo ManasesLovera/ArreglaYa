@@ -3,9 +3,10 @@ using Infrastructure.IOC;
 using Application.IOC;
 using WebAPI.Validation;
 using Microsoft.EntityFrameworkCore;
-using WebAPI.Auth.Jwt;
+using Application.Auth;
 using Infrastructure.Seed;
 using WebAPI.Configuration;
+using WebAPI.Auth.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCustomSwagger();
 // Dependency Injection from other layers
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddAplicationLayer();
+builder.Services.AddApplicationServices();
 builder.Services.AddValidators();
 
 // Jwt Authorization
