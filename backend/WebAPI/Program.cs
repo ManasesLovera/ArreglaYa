@@ -1,28 +1,21 @@
 ﻿using Infrastructure.Data;
 using Infrastructure.IOC;
 using Application.IOC;
-using WebAPI.Validation;
+using WebAPI.IOC;
 using Microsoft.EntityFrameworkCore;
-using WebAPI.Auth.Jwt;
 using Infrastructure.Seed;
-using WebAPI.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure CORS
-builder.Services.AddCustomCors(builder.Environment);
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-// Add Swagger config
-builder.Services.AddCustomSwagger();
-// Dependency Injection from other layers
-builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddAplicationLayer();
-builder.Services.AddValidators();
 
-// Jwt Authorization
-builder.Services.AddJwtAuthentication(builder.Configuration);
+// Dependency Injection from other layers
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplicationLayer();
+builder.Services.AddWebAPILayer(builder.Configuration, builder);
+
+// Authorization
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers(options =>
