@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.User
+﻿namespace Application.DTOs.User
 {
+    /// <summary>
+    /// Represents the result of a user operation.
+    /// </summary>
+    /// <param name="IsSuccess">Indicates whether the operation was successful.</param>
+    /// <param name="Message">Optional message describing the result.</param>
+    /// <param name="User">Optional user response data if the operation returns a user.</param>
     public record UserResult
     (
-        bool IsSuccessful,
+        bool IsSuccess,
         string? Message = null,
         UserResponse? User = null
     );

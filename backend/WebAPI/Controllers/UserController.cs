@@ -1,81 +1,67 @@
 ﻿using Application.DTOs.Common;
 using Application.DTOs.User;
-using Application.Interfaces.Repository;
+using Application.Interfaces.Services;
 using AutoMapper;
-using Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace WebAPI.Controllers
 {
     /// <summary>
     /// Controller for managing user-related operations.
+    /// Provides endpoints for CRUD operations on users and password management.
     /// </summary>
     [Route("api/user")]
     [ApiController]
     [Authorize]
     public class UserController : BaseController
     {
-        private readonly IUserRepository _userRepo;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
 
-        public UserController(IUserRepository userRepo, UserManager<ApplicationUser> userManager, IMapper mapper)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserController"/> class.
+        /// </summary>
+        /// <param name="userService">The user service for user operations.</param>
+        /// <param name="mapper">The AutoMapper instance.</param>
+        public UserController(IUserService userService, IMapper mapper)
         : base(mapper)
         {
-            _userRepo = userRepo;
-            _userManager = userManager;
+            _userService = userService;
         }
 
         /// <summary>
         /// Retrieves paginated list of users including roles.
         /// </summary>
+        /// <param name="query">The pagination query parameters.</param>
         /// <returns>A paginated response of UserResponse objects.</returns>
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<PaginatedResponse<UserResponse>> GetPaginatedAsync([FromQuery] PaginationQuery query)
+        public async Task<ActionResult<PaginatedResponse<UserResponse>>> GetPaginatedAsync([FromQuery] PaginationQuery query)
         {
-            var users = await _userRepo.GetPaginatedAsync(query.PageIndex, query.PageSize);
-            var totalRecords = await _userRepo.GetTotalCountAsync();
-
-            var userResponses = new List<UserResponse>();
-
-            foreach (var user in users)
-            {
-                var userResponse = _mapper.Map<UserResponse>(user);
-                userResponse.Roles = (await _userManager.GetRolesAsync(user)).ToArray();
-                userResponses.Add(userResponse);
-            }
-
-            return new PaginatedResponse<UserResponse>(
-                userResponses,
-                totalRecords,
-                query.PageIndex,
-                query.PageSize
-            );
+            var result = await _userService.GetPaginatedUsersAsync(query.PageIndex, query.PageSize);
+            return Ok(result);
         }
 
         /// <summary>
         /// Retrieves a user by its ID including roles.
         /// </summary>
         /// <param name="id">The ID of the user.</param>
+        /// <returns>The user result containing user information.</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserResult>> GetByIdAsync(string id)
         {
-            var user = await _userRepo.GetByIdAsync(id);
+            var result = await _userService.GetUserByIdAsync(id);
             
-            if (user == null)
+            if (!result.IsSuccess)
             {
-                return NotFound(new UserResult(false, "User was not found"));
+                return NotFound(result);
             }
-            var roles = await _userManager.GetRolesAsync(user);
-            var userResponse = _mapper.Map<UserResponse>(user);
-            userResponse.Roles = (await _userManager.GetRolesAsync(user)).ToArray();
-            return Ok(new UserResult(true, User: userResponse));
+
+            return Ok(result);
         }
 
         /// <summary>
@@ -90,51 +76,49 @@ namespace WebAPI.Controllers
         /// </returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserRequest request, IValidator<CreateUserRequest> validator)
+        public async Task<IActionResult> CreateUserAsync(
+            [FromBody] CreateUserRequest request, 
+            [FromServices] IValidator<CreateUserRequest> validator)
         {
-            var validationResult = validator.Validate(request);
+            var validationResult = await validator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.ToDictionary());
             }
 
-            // Check if username or email already exists
-            var existingUserByName = await _userManager.FindByNameAsync(request.Username);
-            if (existingUserByName != null)
-                return Conflict($"Username '{request.Username}' is already taken.");
+            var result = await _userService.CreateUserAsync(request);
 
-            var existingUserByEmail = await _userManager.FindByEmailAsync(request.Email);
-            if (existingUserByEmail != null)
-                return Conflict($"Email '{request.Email}' is already registered.");
-
-            var user = _mapper.Map<ApplicationUser>(existingUserByEmail);
-
-            var result = await _userManager.CreateAsync(user, request.Password);
-            if (!result.Succeeded)
+            if (!result.IsSuccess)
             {
-                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-                return BadRequest(errors);
+                // Check if it's a conflict (username/email already exists)
+                if (result.Message.Contains("already taken") || result.Message.Contains("already registered"))
+                {
+                    return Conflict(result);
+                }
+                return BadRequest(result);
             }
 
-            await _userManager.AddToRoleAsync(user, "Client");
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = user.Id }, new { Message = "User created successfully", UserId = user.Id });
+            return CreatedAtAction(
+                nameof(GetByIdAsync), 
+                new { id = result.User.Id }, 
+                result);
         }
 
         /// <summary>
         /// Deletes a user by its ID.
         /// </summary>
         /// <param name="id">The ID of the user to delete.</param>
+        /// <returns>A no content result if successful, otherwise not found.</returns>
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
-            var user = await _userRepo.GetByIdAsync(id);
-            if (user == null)
+            var deleted = await _userService.DeleteUserAsync(id);
+            if (!deleted)
             {
-                return NotFound();
+                return NotFound(new UserResult(false, "User not found."));
             }
 
-            await _userRepo.DeleteAsync(user.Id);
             return NoContent();
         }
 
@@ -142,25 +126,30 @@ namespace WebAPI.Controllers
         /// Updates the password of the currently logged-in user.
         /// </summary>
         /// <param name="request">The request containing the old and new passwords.</param>
+        /// <returns>An action result indicating success or failure.</returns>
         [Authorize]
         [HttpPatch("update-password")]
         public async Task<IActionResult> UpdatePasswordAsync([FromBody] UpdatePasswordRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                      ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub); // fallback if needed
+                      ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             if (string.IsNullOrEmpty(userId))
-                return Unauthorized("Invalid token or missing user ID.");
+            {
+                return Unauthorized(ApiResponse<object>.Failure("Invalid token or missing user ID."));
+            }
 
-            var user = await _userRepo.GetByIdAsync(userId);
-            if (user == null)
-                return NotFound();
+            var (success, message) = await _userService.UpdatePasswordAsync(
+                userId, 
+                request.CurrentPassword, 
+                request.NewPassword);
 
-            var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
-            if (!result.Succeeded)
-                return BadRequest(string.Join("; ", result.Errors.Select(e => e.Description)));
+            if (!success)
+            {
+                return BadRequest(ApiResponse<object>.Failure(message));
+            }
 
-            return Ok("Password updated successfully.");
+            return Ok(ApiResponse<object>.Success(null, message));
         }
     }
 }

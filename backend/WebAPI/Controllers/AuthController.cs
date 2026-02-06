@@ -11,17 +11,30 @@ using Microsoft.AspNetCore.Http;
 
 namespace WebAPI.Controllers
 {
+    /// <summary>
+    /// Controller for handling authentication and authorization operations.
+    /// Provides endpoints for login, registration, token refresh, and logout.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : BaseController
     {
         private readonly IAuthService _authService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthController"/> class.
+        /// </summary>
+        /// <param name="authService">The authentication service.</param>
+        /// <param name="mapper">The AutoMapper instance.</param>
         public AuthController(IAuthService authService, IMapper mapper) : base(mapper)
         {
             _authService = authService;
         }
 
+        /// <summary>
+        /// Gets the currently authenticated user's information.
+        /// </summary>
+        /// <returns>The user information if authenticated.</returns>
         [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> Me()
@@ -36,6 +49,11 @@ namespace WebAPI.Controllers
             return Ok(userResponse);
         }
 
+        /// <summary>
+        /// Authenticates a user and returns access and refresh tokens via HTTP-only cookies.
+        /// </summary>
+        /// <param name="request">The login credentials.</param>
+        /// <returns>The authenticated user's information.</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -48,9 +66,13 @@ namespace WebAPI.Controllers
                 return Ok(new { User = userResponse });
             }
             catch (UnauthorizedAccessException ex) { return Unauthorized(ex.Message); }
-            catch (Exception ex) { return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred during login."); }
+            catch (Exception) { return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred during login."); }
         }
 
+        /// <summary>
+        /// Refreshes the access token using a valid refresh token from cookies.
+        /// </summary>
+        /// <returns>The refreshed user information with new tokens set in cookies.</returns>
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken()
         {
@@ -66,9 +88,13 @@ namespace WebAPI.Controllers
             }
             catch (ArgumentNullException ex) { return BadRequest(ex.Message); }
             catch (UnauthorizedAccessException ex) { return Unauthorized(ex.Message); }
-            catch (Exception ex) { return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred while refreshing token.");}
+            catch (Exception) { return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred while refreshing token.");}
         }
 
+        /// <summary>
+        /// Logs out the current user by clearing authentication cookies and invalidating refresh token.
+        /// </summary>
+        /// <returns>A success message.</returns>
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
@@ -76,7 +102,7 @@ namespace WebAPI.Controllers
             if (!string.IsNullOrEmpty(refreshTokenFromCookie))
             {
                 try { await _authService.LogoutAsync(refreshTokenFromCookie); }
-                catch (Exception) { /* Log error but proceed */ }
+                catch (Exception) { /* Log error but proceed with cookie deletion */ }
             }
             var cookieOptionsNone = new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.None, Path = "/" };
             var cookieOptionsStrict = new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict, Path = "/" };
@@ -88,6 +114,12 @@ namespace WebAPI.Controllers
             return Ok("Logged out successfully.");
         }
 
+        /// <summary>
+        /// Registers a new user account.
+        /// </summary>
+        /// <param name="request">The registration information.</param>
+        /// <param name="validator">The request validator.</param>
+        /// <returns>A success message with email verification instructions.</returns>
         [HttpPost("register")]
         public async Task<IActionResult> Register(
             [FromBody] RegisterRequest request,
@@ -112,6 +144,12 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Verifies a user's email address using a verification token.
+        /// </summary>
+        /// <param name="request">The email verification request containing user ID and token.</param>
+        /// <param name="validator">The request validator.</param>
+        /// <returns>A success message if email is verified.</returns>
         [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail(
             [FromBody] VerifyEmailRequest request, 
@@ -124,18 +162,14 @@ namespace WebAPI.Controllers
             try
             {
                 await _authService.VerifyEmailAsync(request);
-                // If VerifyEmailAsync throws on failure, this is only reached on success.
                 return Ok("Email confirmed.");
             }
             catch (ArgumentException ex) when (ex.Message == "User not found.")
             {
-                // This specific catch for "User not found" ensures a 404 Not Found.
                 return NotFound(ex.Message);
             }
-            catch (Exception ex) // Catches other errors, like "Email confirmation failed: <Identity Errors>"
+            catch (Exception ex)
             {
-                // Log ex for server-side details
-                // Return a BadRequest with the failure reasons.
                 return BadRequest(new { message = "Email verification failed.", errors = ex.Message });
             }
         }

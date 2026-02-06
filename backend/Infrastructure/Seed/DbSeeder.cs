@@ -2,15 +2,24 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Seed
 {
+    /// <summary>
+    /// Database seeder for initializing default data.
+    /// </summary>
     public static class DbSeeder
     {
+        /// <summary>
+        /// Seeds the database with default roles and admin user.
+        /// Creates Admin, Client, and Company roles if they don't exist.
+        /// Creates a default admin user with all roles if it doesn't exist.
+        /// </summary>
+        /// <param name="serviceProvider">The service provider for dependency injection.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="Exception">Thrown if admin user creation fails.</exception>
         public static async Task SeedDefaultAdminAsync(IServiceProvider serviceProvider)
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -53,5 +62,4 @@ namespace Infrastructure.Seed
             }
         }
     }
-
 }
