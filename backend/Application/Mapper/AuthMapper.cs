@@ -11,7 +11,7 @@ namespace Application.Mapper
     {
         public AuthMapper()
         {
-            //CreateMap<>
+            CreateMap<Application.DTOs.Account.RegisterRequest, Domain.Models.User>();
         }
     }
 }

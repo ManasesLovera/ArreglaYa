@@ -13,7 +13,7 @@ namespace Infrastructure.Seed
     {
         public static async Task SeedDefaultAdminAsync(IServiceProvider serviceProvider)
         {
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             string[] roles = new[] { "Admin", "Client", "Company" };
@@ -30,7 +30,7 @@ namespace Infrastructure.Seed
 
             if (adminUser == null)
             {
-                var user = new ApplicationUser
+                var user = new User
                 {
                     UserName = "admin",
                     Email = adminEmail,

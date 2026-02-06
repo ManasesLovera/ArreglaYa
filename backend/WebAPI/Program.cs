@@ -18,7 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCustomSwagger();
 // Dependency Injection from other layers
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddAplicationLayer();
+builder.Services.AddApplicationServices();
 builder.Services.AddValidators();
 
 // Jwt Authorization

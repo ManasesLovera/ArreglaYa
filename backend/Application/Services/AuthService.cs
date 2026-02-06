@@ -6,7 +6,7 @@ using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using WebAPI.Auth.Jwt;
+using Application.Auth;
 using System;
 using System.Linq;
 using System.Threading.Tasks; // Ensure Task is available
@@ -19,8 +19,8 @@ namespace Application.Services
     /// </summary>
     public class AuthService : IAuthService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly JwtTokenGenerator _tokenGenerator;
         private readonly IMapper _mapper;
 
@@ -32,8 +32,8 @@ namespace Application.Services
         /// <param name="tokenGenerator">The JWT token generator.</param>
         /// <param name="mapper">The AutoMapper instance for DTO mapping.</param>
         public AuthService(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
             JwtTokenGenerator tokenGenerator,
             IMapper mapper)
         {
@@ -140,7 +140,7 @@ namespace Application.Services
             if (userExists != null)
                 throw new ArgumentException("This email is already in use.");
 
-            var user = _mapper.Map<ApplicationUser>(request);
+            var user = _mapper.Map<User>(request);
             if (string.IsNullOrEmpty(user.UserName))
             {
                 user.UserName = request.Email;
