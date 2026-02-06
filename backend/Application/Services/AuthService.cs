@@ -152,6 +152,15 @@ namespace Application.Services
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new Exception($"User registration failed: {errors}");
             }
+            
+            // Assign default "Client" role to newly registered users
+            var roleResult = await _userManager.AddToRoleAsync(user, "Client");
+            if (!roleResult.Succeeded)
+            {
+                var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                throw new Exception($"Failed to assign role to user: {errors}");
+            }
+            
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             return token;
         }
