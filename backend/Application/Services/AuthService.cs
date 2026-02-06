@@ -140,11 +140,13 @@ namespace Application.Services
             if (userExists != null)
                 throw new ArgumentException("This email is already in use.");
 
-            var user = _mapper.Map<User>(request);
-            if (string.IsNullOrEmpty(user.UserName))
+            var user = new User
             {
-                user.UserName = request.Email;
-            }
+                FullName = request.FullName ?? string.Empty,
+                UserName = request.UserName ?? request.Email,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber
+            };
 
             var result = await _userManager.CreateAsync(user, request.Password!);
             if (!result.Succeeded)
