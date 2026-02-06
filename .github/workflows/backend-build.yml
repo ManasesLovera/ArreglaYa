@@ -1,0 +1,50 @@
+name: Backend Build and Test
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-build.yml'
+  pull_request:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-build.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and Verify
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore ArreglaYa.sln
+      
+    - name: Build solution
+      run: dotnet build ArreglaYa.sln --configuration Release --no-restore
+      
+    - name: Run tests
+      run: dotnet test ArreglaYa.sln --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+      continue-on-error: true
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: backend/**/TestResults/*.trx
+        if-no-files-found: ignore

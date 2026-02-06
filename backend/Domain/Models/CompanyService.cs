@@ -46,7 +46,7 @@ namespace Domain.Models;
     /// Gets or sets the company offering the service.
     /// </summary>
     [ForeignKey(nameof(CompanyId))]
-    public ApplicationUser? Company { get; set; }
+    public User? Company { get; set; }
 
     /// <summary>
     /// Gets or sets the collection of transactions associated with the service.

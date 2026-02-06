@@ -1,4 +1,4 @@
-﻿namespace WebAPI.Auth.Jwt
+﻿namespace Application.Auth
 {
     public class JwtSettings
     {

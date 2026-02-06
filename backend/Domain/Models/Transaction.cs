@@ -44,5 +44,5 @@ public class Transaction
     /// Gets or sets the client involved in the transaction.
     /// </summary>
     [ForeignKey(nameof(ClientId))]
-    public ApplicationUser? Client { get; set; }
+    public User? Client { get; set; }
 }

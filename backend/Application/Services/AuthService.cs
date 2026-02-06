@@ -6,7 +6,7 @@ using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using WebAPI.Auth.Jwt;
+using Application.Auth;
 using System;
 using System.Linq;
 using System.Threading.Tasks; // Ensure Task is available
@@ -19,8 +19,8 @@ namespace Application.Services
     /// </summary>
     public class AuthService : IAuthService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly JwtTokenGenerator _tokenGenerator;
         private readonly IMapper _mapper;
 
@@ -32,8 +32,8 @@ namespace Application.Services
         /// <param name="tokenGenerator">The JWT token generator.</param>
         /// <param name="mapper">The AutoMapper instance for DTO mapping.</param>
         public AuthService(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
             JwtTokenGenerator tokenGenerator,
             IMapper mapper)
         {
@@ -140,11 +140,13 @@ namespace Application.Services
             if (userExists != null)
                 throw new ArgumentException("This email is already in use.");
 
-            var user = _mapper.Map<ApplicationUser>(request);
-            if (string.IsNullOrEmpty(user.UserName))
+            var user = new User
             {
-                user.UserName = request.Email;
-            }
+                FullName = request.FullName ?? string.Empty,
+                UserName = request.UserName ?? request.Email,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber
+            };
 
             var result = await _userManager.CreateAsync(user, request.Password!);
             if (!result.Succeeded)
@@ -152,6 +154,15 @@ namespace Application.Services
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new Exception($"User registration failed: {errors}");
             }
+            
+            // Assign default "Client" role to newly registered users
+            var roleResult = await _userManager.AddToRoleAsync(user, "Client");
+            if (!roleResult.Succeeded)
+            {
+                var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                throw new Exception($"Failed to assign role to user: {errors}");
+            }
+            
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             return token;
         }

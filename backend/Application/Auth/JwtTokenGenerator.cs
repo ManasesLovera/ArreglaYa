@@ -5,7 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace WebAPI.Auth.Jwt
+namespace Application.Auth
 {
     public class JwtTokenGenerator
     {
@@ -16,7 +16,7 @@ namespace WebAPI.Auth.Jwt
             _jwtSettings = options.Value;
         }
 
-        public string Generate(ApplicationUser user, IList<string> roles)
+        public string Generate(User user, IList<string> roles)
         {
             var claims = new List<Claim>
             {

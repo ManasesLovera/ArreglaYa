@@ -21,9 +21,9 @@ namespace WebAPI.Controllers
     public class UserController : BaseController
     {
         private readonly IUserRepository _userRepo;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
-        public UserController(IUserRepository userRepo, UserManager<ApplicationUser> userManager, IMapper mapper)
+        public UserController(IUserRepository userRepo, UserManager<User> userManager, IMapper mapper)
         : base(mapper)
         {
             _userRepo = userRepo;
@@ -107,7 +107,7 @@ namespace WebAPI.Controllers
             if (existingUserByEmail != null)
                 return Conflict($"Email '{request.Email}' is already registered.");
 
-            var user = _mapper.Map<ApplicationUser>(existingUserByEmail);
+            var user = _mapper.Map<User>(request);
 
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)

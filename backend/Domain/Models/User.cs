@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class User : IdentityUser
     {
         /// <summary>
         /// Gets or sets the full name of the user.

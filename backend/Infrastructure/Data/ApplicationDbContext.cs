@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -17,11 +17,11 @@ namespace Infrastructure.Data
             base.OnModelCreating(builder);
 
             #region Tables
-            builder.Entity<ApplicationUser>()
+            builder.Entity<User>()
                 .ToTable("Users");
             #endregion
             #region SQL Relationships
-            // CompanyService -> ApplicationUser (CompanyId as FK)
+            // CompanyService -> User (CompanyId as FK)
             builder.Entity<CompanyService>()
                 .HasOne(cs => cs.Company)
                 .WithMany(u => u.CompanyServices)
@@ -35,7 +35,7 @@ namespace Infrastructure.Data
                 .HasForeignKey(t => t.CompanyServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Transaction -> ApplicationUser (ClientId as FK)
+            // Transaction -> User (ClientId as FK)
             builder.Entity<Transaction>()
                 .HasOne(t => t.Client)
                 .WithMany(u => u.Transactions)
