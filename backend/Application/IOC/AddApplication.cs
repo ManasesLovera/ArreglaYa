@@ -18,7 +18,11 @@ namespace Application.IOC
     [Obsolete("Use Application.IOC.DependencyInjection.AddApplicationLayer() instead")]
     public static class AddApplication
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        /// <summary>
+        /// DEPRECATED: Use Application.IOC.DependencyInjection.AddApplicationLayer() instead.
+        /// </summary>
+        [Obsolete("Use Application.IOC.DependencyInjection.AddApplicationLayer() instead")]
+        public static IServiceCollection AddApplicationServicesLegacy(this IServiceCollection services)
         {
             // Configure AutoMapper
             // It will scan the assembly for profiles and register them.

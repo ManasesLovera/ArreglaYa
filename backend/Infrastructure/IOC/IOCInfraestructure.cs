@@ -23,7 +23,11 @@ namespace Infrastructure.IOC
     [Obsolete("Use Infrastructure.IOC.DependencyInjection.AddInfrastructure() instead")]
     public static class IOCInfrastructure
     {
-        public static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
+        /// <summary>
+        /// DEPRECATED: Use Infrastructure.IOC.DependencyInjection.AddInfrastructure() instead.
+        /// </summary>
+        [Obsolete("Use Infrastructure.IOC.DependencyInjection.AddInfrastructure() instead")]
+        public static void AddPersistenceLegacy(this IServiceCollection services, IConfiguration configuration)
         {
             #region Context
             services.AddDbContext<ApplicationDbContext>(options =>
