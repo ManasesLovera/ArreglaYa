@@ -1,6 +1,7 @@
 using Application.Interfaces.Services; // Added for IAuthService
 using Application.Services; // Added for AuthService
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Reflection;
 // Assuming SmtpEmailService and ISmtpEmailService are correctly namespaced if they exist
 // For example:
@@ -9,6 +10,12 @@ using System.Reflection;
 
 namespace Application.IOC
 {
+    /// <summary>
+    /// DEPRECATED: This class has been replaced by the modular DependencyInjection pattern.
+    /// Use Application.IOC.DependencyInjection.AddApplicationLayer() instead.
+    /// This class is kept for backward compatibility only.
+    /// </summary>
+    [Obsolete("Use Application.IOC.DependencyInjection.AddApplicationLayer() instead")]
     public static class AddApplication
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)

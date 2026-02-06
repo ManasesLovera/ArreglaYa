@@ -15,6 +15,12 @@ using Domain;
 
 namespace Infrastructure.IOC
 {
+    /// <summary>
+    /// DEPRECATED: This class has been replaced by the modular DependencyInjection pattern.
+    /// Use Infrastructure.IOC.DependencyInjection.AddInfrastructure() instead.
+    /// This class is kept for backward compatibility only.
+    /// </summary>
+    [Obsolete("Use Infrastructure.IOC.DependencyInjection.AddInfrastructure() instead")]
     public static class IOCInfrastructure
     {
         public static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
